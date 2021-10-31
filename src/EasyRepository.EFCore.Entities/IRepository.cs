@@ -136,5 +136,24 @@ namespace EasyRepository.EFCore.Abstractions
         /// Returns <see cref="Task{IEnumerable{TEntity}}"/>
         /// </returns>
         Task<IEnumerable<TEntity>> AddRangeAsync<TEntity, TPrimaryKey>(IEnumerable<TEntity> entites, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>;
+
+        /// <summary>
+        /// This method takes <see cref="{TEntity}"/> and performs entity hard delete operation.
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of entity
+        /// </typeparam>
+        /// <param name="entity">
+        /// The entity to be deleted
+        /// </param>
+        void HardDelete<TEntity>(TEntity entity) where TEntity : class, new();
+
+        /// <summary>
+        /// This method takes <see cref="{TEntity}"/> and <see cref="CancellationToken"/>. This method performs entity hard delete operation. In additional this methods returns <see cref="Task"/>
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        Task HardDeleteAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class, new();
     }
 }
