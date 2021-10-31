@@ -311,5 +311,186 @@ namespace EasyRepository.EFCore.Abstractions
         /// Returns <see cref="Task"/>
         /// </returns>
         Task SoftDeleteAsync<TEntity, TPrimaryKey>(TPrimaryKey id, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>;
+
+        /// <summary>
+        /// This method takes <see cref="{TEntity}"/> performs update operation. In additional returns <see cref="{TEntity}"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of Entity
+        /// </typeparam>
+        /// <param name="entity">
+        /// The entity to be updated
+        /// </param>
+        TEntity Update<TEntity>(TEntity entity) where TEntity : class, new();
+
+        /// <summary>
+        /// This method takes <see cref="{TEntity}"/> and <see cref="CancellationToken"/> performs update operation async version. In additional this methods returns <see cref="Task{TEntity}"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of Entity
+        /// </typeparam>
+        /// <param name="entity">
+        /// The entity to be updated
+        /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>
+        /// Returns <see cref="Task"/>
+        /// </returns>
+        Task<TEntity> UpdateAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class, new();
+
+        /// <summary>
+        /// This method takes <see cref="IEnumerable{TEntity}"/> performs update operation. In additional returns <see cref="IEnumerable{TEntity}"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of Entity
+        /// </typeparam>
+        /// <param name="entities">
+        /// The entities to be updated
+        /// </param>
+        IEnumerable<TEntity> UpdateRange<TEntity>(IEnumerable<TEntity> entities) where TEntity : class, new();
+
+        /// <summary>
+        /// This method takes <see cref="IEnumerable{TEntity}"/> and <see cref="CancellationToken"/> performs update operation async version. In additional this methods returns <see cref="Task{TResult}"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of Entity
+        /// </typeparam>
+        /// <param name="entities">
+        /// The entities to be updated
+        /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>
+        /// Returns <see cref="Task{TResult}"/>
+        /// </returns>
+        Task<IEnumerable<TEntity>> UpdateRangeAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class, new();
+
+        /// <summary>
+        /// This method takes <see cref="{TEntity}"/> and <see cref="{TPrimaryKey}"/>. This method performs update operation for EasyBaseEntity. In additional this method returs <see cref="{TEntity}"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of Entity
+        /// </typeparam>
+        /// <typeparam name="TPrimaryKey">
+        /// Type of Primary Key
+        /// </typeparam>
+        /// <param name="entity">
+        /// The entity to be updated
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="{TEntity}"/>
+        /// </returns>
+        TEntity Update<TEntity, TPrimaryKey>(TEntity entity) where TEntity : EasyBaseEntity<TPrimaryKey>;
+
+        /// <summary>
+        /// This method takes <see cref="{TEntity}"/> and <see cref="{TPrimaryKey}"/>. This method performs update operation for EasyBaseEntity. In additional this method returs <see cref="Task{TEntity}"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of Entity
+        /// </typeparam>
+        /// <typeparam name="TPrimaryKey">
+        /// Type of Primary Key
+        /// </typeparam>
+        /// <param name="entity">
+        /// The entity to be updated
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="Task{TEntity}"/>
+        /// </returns>
+        Task<TEntity> UpdateAsync<TEntity, TPrimaryKey>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>;
+
+        /// <summary>
+        /// This method takes <see cref="IEnumerable{TEntity}"/> and <see cref="{TPrimaryKey}"/>. This method performs update range operation for EasyBaseEntity. In additional this method returs <see cref="IEnumerable{TEntity}"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of Entity
+        /// </typeparam>
+        /// <typeparam name="TPrimaryKey">
+        /// Type of Primary Key
+        /// </typeparam>
+        /// <param name="entities">
+        /// The entities to be updated
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="{TEntity}"/>
+        /// </returns>
+        IEnumerable<TEntity> UpdateRange<TEntity, TPrimaryKey>(IEnumerable<TEntity> entities) where TEntity : EasyBaseEntity<TPrimaryKey>;
+
+        /// <summary>
+        /// This method takes <see cref="IEnumerable{TEntity}"/> and <see cref="{TPrimaryKey}"/>. This method performs update operation for EasyBaseEntity. In additional this method returs <see cref="Task{TResult}"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of Entity
+        /// </typeparam>
+        /// <typeparam name="TPrimaryKey">
+        /// Type of Primary Key
+        /// </typeparam>
+        /// <param name="entites">
+        /// The entites to be updated
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="Task{TResult}"/>
+        /// </returns>
+        Task<IEnumerable<TEntity>> UpdateRangeAsync<TEntity, TPrimaryKey>(IEnumerable<TEntity> entites, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>;
+
+        /// <summary>
+        /// This method takes <see cref="{TEntity}"/> performs replace operation. In additional returns <see cref="{TEntity}"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of Entity
+        /// </typeparam>
+        /// <param name="entity">
+        /// The entity to be replaced
+        /// </param>
+        TEntity Replace<TEntity>(TEntity entity) where TEntity : class, new();
+
+
+        /// <summary>
+        /// This method takes <see cref="{TEntity}"/> and <see cref="CancellationToken"/> performs replace operation async version. In additional this methods returns <see cref="Task{TEntity}"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of Entity
+        /// </typeparam>
+        /// <param name="entity">
+        /// The entity to be replaced
+        /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>
+        /// Returns <see cref="Task"/>
+        /// </returns>
+        Task<TEntity> ReplaceAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class, new();
+
+        /// <summary>
+        /// This method takes <see cref="{TEntity}"/> and <see cref="{TPrimaryKey}"/>. This method performs replace operation for EasyBaseEntity. In additional this method returs <see cref="{TEntity}"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of Entity
+        /// </typeparam>
+        /// <typeparam name="TPrimaryKey">
+        /// Type of Primary Key
+        /// </typeparam>
+        /// <param name="entity">
+        /// The entity to be replaced
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="{TEntity}"/>
+        /// </returns>
+        TEntity Replace<TEntity, TPrimaryKey>(TEntity entity) where TEntity : EasyBaseEntity<TPrimaryKey>;
+
+        /// <summary>
+        /// This method takes <see cref="{TEntity}"/> and <see cref="{TPrimaryKey}"/>. This method performs replace operation for EasyBaseEntity. In additional this method returs <see cref="Task{TEntity}"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of Entity
+        /// </typeparam>
+        /// <typeparam name="TPrimaryKey">
+        /// Type of Primary Key
+        /// </typeparam>
+        /// <param name="entity">
+        /// The entity to be replaced
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="Task{TEntity}"/>
+        /// </returns>
+        Task<TEntity> ReplaceAsync<TEntity, TPrimaryKey>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>;
     }
 }
