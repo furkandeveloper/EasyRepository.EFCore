@@ -5,7 +5,15 @@ VisualStudioVersion = 16.6.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6ECD69C4-213C-400A-8EFE-DB1B5E33DC29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyRepository.EFCore.Entities", "src\EasyRepository.EFCore.Entities\EasyRepository.EFCore.Entities.csproj", "{9B909B96-23EC-48CE-A9A8-237F714896E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyRepository.EFCore.Abstractions", "src\EasyRepository.EFCore.Entities\EasyRepository.EFCore.Abstractions.csproj", "{9B909B96-23EC-48CE-A9A8-237F714896E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyRepository.EFCore.Generic", "src\EasyRepository.EFCore.Generic\EasyRepository.EFCore.Generic.csproj", "{730B0EE2-7048-4F0E-9DA0-7F0DDED22707}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CB94A892-F59B-42D2-BE0D-31E0879CEEE7}"
+	ProjectSection(SolutionItems) = preProject
+		common.props = common.props
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,12 +37,25 @@ Global
 		{9B909B96-23EC-48CE-A9A8-237F714896E9}.Release|x64.Build.0 = Release|Any CPU
 		{9B909B96-23EC-48CE-A9A8-237F714896E9}.Release|x86.ActiveCfg = Release|Any CPU
 		{9B909B96-23EC-48CE-A9A8-237F714896E9}.Release|x86.Build.0 = Release|Any CPU
+		{730B0EE2-7048-4F0E-9DA0-7F0DDED22707}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{730B0EE2-7048-4F0E-9DA0-7F0DDED22707}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{730B0EE2-7048-4F0E-9DA0-7F0DDED22707}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{730B0EE2-7048-4F0E-9DA0-7F0DDED22707}.Debug|x64.Build.0 = Debug|Any CPU
+		{730B0EE2-7048-4F0E-9DA0-7F0DDED22707}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{730B0EE2-7048-4F0E-9DA0-7F0DDED22707}.Debug|x86.Build.0 = Debug|Any CPU
+		{730B0EE2-7048-4F0E-9DA0-7F0DDED22707}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{730B0EE2-7048-4F0E-9DA0-7F0DDED22707}.Release|Any CPU.Build.0 = Release|Any CPU
+		{730B0EE2-7048-4F0E-9DA0-7F0DDED22707}.Release|x64.ActiveCfg = Release|Any CPU
+		{730B0EE2-7048-4F0E-9DA0-7F0DDED22707}.Release|x64.Build.0 = Release|Any CPU
+		{730B0EE2-7048-4F0E-9DA0-7F0DDED22707}.Release|x86.ActiveCfg = Release|Any CPU
+		{730B0EE2-7048-4F0E-9DA0-7F0DDED22707}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9B909B96-23EC-48CE-A9A8-237F714896E9} = {6ECD69C4-213C-400A-8EFE-DB1B5E33DC29}
+		{730B0EE2-7048-4F0E-9DA0-7F0DDED22707} = {6ECD69C4-213C-400A-8EFE-DB1B5E33DC29}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {82B432B5-EED3-42E9-AFEC-D899479E4CC3}
