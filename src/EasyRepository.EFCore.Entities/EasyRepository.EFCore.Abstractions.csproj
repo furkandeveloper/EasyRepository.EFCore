@@ -1,5 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<Import Project="..\..\common.props" />
+
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.11" />
+	</ItemGroup>
 
 </Project>
