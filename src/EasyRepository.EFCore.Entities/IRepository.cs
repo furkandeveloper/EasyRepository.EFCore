@@ -1535,5 +1535,35 @@ namespace EasyRepository.EFCore.Abstractions
         /// Returns <see cref="{TProjected}"/>
         /// </returns>
         Task<TProjected> GetByIdAsync<TEntity, TProjected>(bool asNoTracking, object id, IIncludableQueryable<TEntity, TProjected> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
+
+
+        /// <summary>
+        /// This method takes <see cref="Expression{Func}"/> any expression. This method perform exist operation for condition. In additional returns <see cref="bool"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of entity
+        /// </typeparam>
+        /// <param name="anyExpression">
+        /// Any expression <see cref="Expression{Func}"/>
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="bool"/>
+        /// </returns>
+        bool Any<TEntity>(Expression<Func<TEntity,bool>> anyExpression) where TEntity : class, new();
+
+        /// <summary>
+        /// This method takes <see cref="Expression{Func}"/> any expression and <see cref="CancellationToken"/> cancellation token. This method perform exist operation for condition. In additional returns <see cref="bool"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of entity
+        /// </typeparam>
+        /// <param name="anyExpression">
+        /// Any expression <see cref="Expression{Func}"/>
+        /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>
+        /// Returns <see cref="bool"/>
+        /// </returns>
+        Task<bool> AnyAsync<TEntity>(Expression<Func<TEntity, bool>> anyExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
     }
 }
