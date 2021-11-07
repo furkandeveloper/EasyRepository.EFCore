@@ -1565,5 +1565,94 @@ namespace EasyRepository.EFCore.Abstractions
         /// Returns <see cref="bool"/>
         /// </returns>
         Task<bool> AnyAsync<TEntity>(Expression<Func<TEntity, bool>> anyExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
+
+
+        /// <summary>
+        /// This method performs get count information of entity. In additional returns <see cref="int"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of entity
+        /// </typeparam>
+        /// <returns>
+        /// Returns <see cref="int"/>
+        /// </returns>
+        int Count<TEntity>() where TEntity : class, new();
+
+        /// <summary>
+        /// This method takes <see cref="CancellationToken"/> cancellation token.This method performs get count information of entity async version. In additional returns <see cref="int"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of entity
+        /// </typeparam>
+        /// <returns>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// Returns <see cref="int"/>
+        /// </returns>
+        Task<int> CountAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class, new();
+
+        /// <summary>
+        /// This method takes <see cref="Expression{Func}"/>. This method performs get count information of entity with filter. In additional returns <see cref="int"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of entity
+        /// </typeparam>
+        /// <param name="whereExpression">
+        /// Where expression <see cref="Expression{Func}"/>
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="int"/>
+        /// </returns>
+        int Count<TEntity>(Expression<Func<TEntity, bool>> whereExpression) where TEntity : class, new();
+
+        /// <summary>
+        /// This method takes <see cref="Expression{Func}"/> and <see cref="CancellationToken"/> cancellation token. This method performs get count information of entity with filter async version. In additional returns <see cref="int"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of entity
+        /// </typeparam>
+        /// <param name="whereExpression">
+        /// Where expression <see cref="Expression{Func}"/>
+        /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>
+        /// Returns <see cref="int"/>
+        /// </returns>
+        Task<int> Count<TEntity>(Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
+
+
+        /// <summary>
+        /// This method takes <see cref="{TFilter}"/> filterable object. This object must be inheritance <see cref="FilterBase"/>. This method performs get count information of entity with filter. In additional <see cref="int"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of Entity
+        /// </typeparam>
+        /// <typeparam name="TFilter">
+        /// Type of filterable object <see cref="FilterBase"/>
+        /// </typeparam>
+        /// <param name="filter">
+        /// Filterable object <see cref="FilterBase"/>
+        /// </param>
+        /// <returns>
+        /// Returns <see cref="int"/>
+        /// </returns>
+        int Count<TEntity, TFilter>(TFilter filter) where TEntity : class, new() where TFilter : FilterBase;
+
+        /// <summary>
+        /// This method takes <see cref="CancellationToken"/> cancellation token and <see cref="{TFilter}"/> filterable object. This object must be inheritance <see cref="FilterBase"/>. This method performs get count information of entity with filter async version. In additional <see cref="int"/>
+        /// </summary>
+        /// <typeparam name="TEntity">
+        /// Type of Entity
+        /// </typeparam>
+        /// <typeparam name="TFilter">
+        /// Type of filterable object <see cref="FilterBase"/>
+        /// </typeparam>
+        /// <param name="filter">
+        /// Filterable object <see cref="FilterBase"/>
+        /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>
+        /// Returns <see cref="int"/>
+        /// </returns>
+        Task<int> CountAsync<TEntity, TFilter>(TFilter filter, CancellationToken cancellationToken = default) where TEntity : class, new() where TFilter : FilterBase;
     }
 }
