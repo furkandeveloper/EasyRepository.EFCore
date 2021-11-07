@@ -60,24 +60,34 @@ namespace EasyRepository.EFCore.Generic
             return entity;
         }
 
-        public IEnumerable<TEntity> AddRange<TEntity>(IEnumerable<TEntity> entities) where TEntity : class, new()
+        public virtual IEnumerable<TEntity> AddRange<TEntity>(IEnumerable<TEntity> entities) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            context.Set<TEntity>().AddRange(entities);
+            context.SaveChanges();
+            return entities;
         }
 
-        public IEnumerable<TEntity> AddRange<TEntity, TPrimaryKey>(IEnumerable<TEntity> entities) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public virtual IEnumerable<TEntity> AddRange<TEntity, TPrimaryKey>(IEnumerable<TEntity> entities) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            entities.ToList().ForEach(x => x.CreationDate = DateTime.UtcNow);
+            context.Set<TEntity>().AddRange(entities);
+            context.SaveChanges();
+            return entities;
         }
 
-        public Task<IEnumerable<TEntity>> AddRangeAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public virtual async Task<IEnumerable<TEntity>> AddRangeAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            await context.Set<TEntity>().AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return entities;
         }
 
-        public Task<IEnumerable<TEntity>> AddRangeAsync<TEntity, TPrimaryKey>(IEnumerable<TEntity> entites, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public virtual async Task<IEnumerable<TEntity>> AddRangeAsync<TEntity, TPrimaryKey>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            entities.ToList().ForEach(x => x.CreationDate = DateTime.UtcNow);
+            await context.Set<TEntity>().AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return entities;
         }
 
         public bool Any<TEntity>(Expression<Func<TEntity, bool>> anyExpression) where TEntity : class, new()
