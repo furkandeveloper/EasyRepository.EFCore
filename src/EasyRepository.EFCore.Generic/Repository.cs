@@ -90,14 +90,15 @@ namespace EasyRepository.EFCore.Generic
             return entities;
         }
 
-        public bool Any<TEntity>(Expression<Func<TEntity, bool>> anyExpression) where TEntity : class, new()
+        public virtual bool Any<TEntity>(Expression<Func<TEntity, bool>> anyExpression) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            return context.Set<TEntity>().Any(anyExpression);
         }
 
-        public Task<bool> AnyAsync<TEntity>(Expression<Func<TEntity, bool>> anyExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public virtual async Task<bool> AnyAsync<TEntity>(Expression<Func<TEntity, bool>> anyExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            bool result = await context.Set<TEntity>().AnyAsync(anyExpression, cancellationToken).ConfigureAwait(false);
+            return result;
         }
 
         public int Count<TEntity>() where TEntity : class, new()
