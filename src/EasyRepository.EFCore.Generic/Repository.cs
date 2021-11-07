@@ -1,4 +1,5 @@
-﻿using AutoFilterer.Types;
+﻿using AutoFilterer.Extensions;
+using AutoFilterer.Types;
 using EasyRepository.EFCore.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -101,38 +102,41 @@ namespace EasyRepository.EFCore.Generic
             return result;
         }
 
-        public int Count<TEntity>() where TEntity : class, new()
+        public virtual int Count<TEntity>() where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            return context.Set<TEntity>().Count();
         }
 
-        public int Count<TEntity>(Expression<Func<TEntity, bool>> whereExpression) where TEntity : class, new()
+        public virtual int Count<TEntity>(Expression<Func<TEntity, bool>> whereExpression) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            return context.Set<TEntity>().Where(whereExpression).Count();
         }
 
-        public Task<int> Count<TEntity>(Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public virtual async Task<int> Count<TEntity>(Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            int count = await context.Set<TEntity>().Where(whereExpression).CountAsync(cancellationToken).ConfigureAwait(false);
+            return count;
         }
 
-        public int Count<TEntity, TFilter>(TFilter filter)
+        public virtual int Count<TEntity, TFilter>(TFilter filter)
             where TEntity : class, new()
             where TFilter : FilterBase
         {
-            throw new NotImplementedException();
+            return context.Set<TEntity>().ApplyFilter(filter).Count();
         }
 
-        public Task<int> CountAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class, new()
+        public virtual async Task<int> CountAsync<TEntity>(CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            int count = await context.Set<TEntity>().CountAsync(cancellationToken).ConfigureAwait(false);
+            return count;
         }
 
-        public Task<int> CountAsync<TEntity, TFilter>(TFilter filter, CancellationToken cancellationToken = default)
+        public virtual async Task<int> CountAsync<TEntity, TFilter>(TFilter filter, CancellationToken cancellationToken = default)
             where TEntity : class, new()
             where TFilter : FilterBase
         {
-            throw new NotImplementedException();
+            int count = await context.Set<TEntity>().ApplyFilter(filter).CountAsync(cancellationToken).ConfigureAwait(false);
+            return count;
         }
 
         public TEntity GetById<TEntity>(bool asNoTracking, object id) where TEntity : class, new()
