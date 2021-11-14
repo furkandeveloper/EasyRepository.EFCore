@@ -193,7 +193,7 @@ namespace EasyRepository.EFCore.Generic
 
         public virtual async Task HardDeleteAsync<TEntity>(object id, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            var entity = await context.Set<TEntity>().FirstOrDefaultAsync(GenerateExpression<TEntity>(id)).ConfigureAwait(false);
+            var entity = await context.Set<TEntity>().FirstOrDefaultAsync(GenerateExpression<TEntity>(id), cancellationToken).ConfigureAwait(false);
             context.Set<TEntity>().Remove(entity);
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
@@ -206,7 +206,7 @@ namespace EasyRepository.EFCore.Generic
 
         public virtual async Task HardDeleteAsync<TEntity, TPrimaryKey>(TPrimaryKey id, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            var entity = await context.Set<TEntity>().FirstOrDefaultAsync(GenerateExpression<TEntity>(id)).ConfigureAwait(false);
+            var entity = await context.Set<TEntity>().FirstOrDefaultAsync(GenerateExpression<TEntity>(id), cancellationToken).ConfigureAwait(false);
             context.Set<TEntity>().Remove(entity);
             await context.SaveChangesAsync(cancellationToken);
         }
@@ -241,24 +241,34 @@ namespace EasyRepository.EFCore.Generic
             return entity;
         }
 
-        public void SoftDelete<TEntity, TPrimaryKey>(TEntity entity) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public virtual void SoftDelete<TEntity, TPrimaryKey>(TEntity entity) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            entity.IsDeleted = true;
+            entity.DeletionDate = DateTime.UtcNow;
+            Replace<TEntity,TPrimaryKey>(entity);
         }
 
-        public void SoftDelete<TEntity, TPrimaryKey>(TPrimaryKey id) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public virtual void SoftDelete<TEntity, TPrimaryKey>(TPrimaryKey id) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            var entity = context.Set<TEntity>().FirstOrDefault(GenerateExpression<TEntity>(id));
+            entity.IsDeleted = true;
+            entity.DeletionDate = DateTime.UtcNow;
+            Replace<TEntity, TPrimaryKey>(entity);
         }
 
-        public Task SoftDeleteAsync<TEntity, TPrimaryKey>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public virtual async Task SoftDeleteAsync<TEntity, TPrimaryKey>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            entity.IsDeleted = true;
+            entity.DeletionDate = DateTime.UtcNow;
+            await ReplaceAsync<TEntity, TPrimaryKey>(entity, cancellationToken).ConfigureAwait(false);
         }
 
-        public Task SoftDeleteAsync<TEntity, TPrimaryKey>(TPrimaryKey id, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public virtual async Task SoftDeleteAsync<TEntity, TPrimaryKey>(TPrimaryKey id, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            var entity = await context.Set<TEntity>().FirstOrDefaultAsync(GenerateExpression<TEntity>(id), cancellationToken).ConfigureAwait(false);;
+            entity.IsDeleted = true;
+            entity.DeletionDate = DateTime.UtcNow;
+            await ReplaceAsync<TEntity, TPrimaryKey>(entity, cancellationToken).ConfigureAwait(false);
         }
 
         public TEntity Update<TEntity>(TEntity entity) where TEntity : class, new()
