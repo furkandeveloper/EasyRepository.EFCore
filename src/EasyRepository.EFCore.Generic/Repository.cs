@@ -159,61 +159,61 @@ namespace EasyRepository.EFCore.Generic
             return expression;
         }
 
-        public void HardDelete<TEntity>(TEntity entity) where TEntity : class, new()
+        public virtual void HardDelete<TEntity>(TEntity entity) where TEntity : class, new()
         {
             context.Set<TEntity>().Remove(entity);
             context.SaveChanges();
         }
 
-        public void HardDelete<TEntity>(object id) where TEntity : class, new()
+        public virtual void HardDelete<TEntity>(object id) where TEntity : class, new()
         {
             var entity = context.Set<TEntity>().Find(id);
             context.Set<TEntity>().Remove(entity);
             context.SaveChanges();
         }
 
-        public void HardDelete<TEntity, TPrimaryKey>(TEntity entity) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public virtual void HardDelete<TEntity, TPrimaryKey>(TEntity entity) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
             context.Set<TEntity>().Remove(entity);
             context.SaveChanges();
         }
 
-        public void HardDelete<TEntity, TPrimaryKey>(TPrimaryKey id) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public virtual void HardDelete<TEntity, TPrimaryKey>(TPrimaryKey id) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
             var entity = context.Set<TEntity>().FirstOrDefault(GenerateExpression<TEntity>(id));
             context.Set<TEntity>().Remove(entity);
             context.SaveChanges();
         }
 
-        public async Task HardDeleteAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public virtual async Task HardDeleteAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
+            context.Set<TEntity>().Remove(entity);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        public virtual async Task HardDeleteAsync<TEntity>(object id, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            var entity = await context.Set<TEntity>().FirstOrDefaultAsync(GenerateExpression<TEntity>(id)).ConfigureAwait(false);
+            context.Set<TEntity>().Remove(entity);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        public virtual async Task HardDeleteAsync<TEntity, TPrimaryKey>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
+        {
+            context.Set<TEntity>().Remove(entity);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        public virtual async Task HardDeleteAsync<TEntity, TPrimaryKey>(TPrimaryKey id, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
+        {
+            var entity = await context.Set<TEntity>().FirstOrDefaultAsync(GenerateExpression<TEntity>(id)).ConfigureAwait(false);
             context.Set<TEntity>().Remove(entity);
             await context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task HardDeleteAsync<TEntity>(object id, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public virtual TEntity Replace<TEntity>(TEntity entity) where TEntity : class, new()
         {
-            var entity = await context.Set<TEntity>().FirstOrDefaultAsync(GenerateExpression<TEntity>(id));
-            context.Set<TEntity>().Remove(entity);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-
-        public async Task HardDeleteAsync<TEntity, TPrimaryKey>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
-        {
-            context.Set<TEntity>().Remove(entity);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-
-        public async Task HardDeleteAsync<TEntity, TPrimaryKey>(TPrimaryKey id, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
-        {
-            var entity = await context.Set<TEntity>().FirstOrDefaultAsync(GenerateExpression<TEntity>(id));
-            context.Set<TEntity>().Remove(entity);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-
-        public TEntity Replace<TEntity>(TEntity entity) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
+            
         }
 
         public TEntity Replace<TEntity, TPrimaryKey>(TEntity entity) where TEntity : EasyBaseEntity<TPrimaryKey>
