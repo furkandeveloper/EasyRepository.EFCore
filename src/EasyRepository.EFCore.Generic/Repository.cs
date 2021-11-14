@@ -213,22 +213,32 @@ namespace EasyRepository.EFCore.Generic
 
         public virtual TEntity Replace<TEntity>(TEntity entity) where TEntity : class, new()
         {
-            
+            context.Entry(entity).State = EntityState.Modified;
+            context.SaveChanges();
+            return entity;
         }
 
-        public TEntity Replace<TEntity, TPrimaryKey>(TEntity entity) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public virtual TEntity Replace<TEntity, TPrimaryKey>(TEntity entity) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            entity.ModificationDate = DateTime.UtcNow;
+            context.Entry(entity).State = EntityState.Modified;
+            context.SaveChanges();
+            return entity;
         }
 
-        public Task<TEntity> ReplaceAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public virtual async Task<TEntity> ReplaceAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            context.Entry(entity).State = EntityState.Modified;
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return entity;
         }
 
-        public Task<TEntity> ReplaceAsync<TEntity, TPrimaryKey>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public virtual async Task<TEntity> ReplaceAsync<TEntity, TPrimaryKey>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            entity.ModificationDate = DateTime.UtcNow;
+            context.Entry(entity).State = EntityState.Modified;
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return entity;
         }
 
         public void SoftDelete<TEntity, TPrimaryKey>(TEntity entity) where TEntity : EasyBaseEntity<TPrimaryKey>
