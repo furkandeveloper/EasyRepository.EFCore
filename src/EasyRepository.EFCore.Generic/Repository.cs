@@ -331,14 +331,14 @@ namespace EasyRepository.EFCore.Generic
             return entities;
         }
 
-        public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class, new()
+        public virtual IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            return context.Set<TEntity>().AsQueryable();
         }
 
-        public IQueryable<TEntity> GetQueryable<TEntity>(Expression<Func<TEntity, bool>> filter) where TEntity : class, new()
+        public virtual IQueryable<TEntity> GetQueryable<TEntity>(Expression<Func<TEntity, bool>> filter) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            return context.Set<TEntity>().Where(filter);
         }
 
         public List<TEntity> GetMultiple<TEntity>(bool asNoTracking) where TEntity : class, new()
