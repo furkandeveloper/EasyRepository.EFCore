@@ -183,7 +183,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="Task"/>
         /// </returns>
-        Task HardDeleteAsync(object id, CancellationToken cancellationToken = default);
+        Task HardDeleteAsync<TEntity>(object id, CancellationToken cancellationToken = default) where TEntity : class, new();
 
 
         /// <summary>

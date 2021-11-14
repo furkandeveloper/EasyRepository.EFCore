@@ -2,6 +2,7 @@
 using AutoFilterer.Types;
 using EasyRepository.EFCore.Abstractions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 using System;
@@ -190,19 +191,24 @@ namespace EasyRepository.EFCore.Generic
             await context.SaveChangesAsync(cancellationToken);
         }
 
-        public Task HardDeleteAsync(object id, CancellationToken cancellationToken = default)
+        public async Task HardDeleteAsync<TEntity>(object id, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            var entity = await context.Set<TEntity>().FirstOrDefaultAsync(GenerateExpression<TEntity>(id));
+            context.Set<TEntity>().Remove(entity);
+            await context.SaveChangesAsync(cancellationToken);
         }
 
-        public Task HardDeleteAsync<TEntity, TPrimaryKey>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public async Task HardDeleteAsync<TEntity, TPrimaryKey>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            context.Set<TEntity>().Remove(entity);
+            await context.SaveChangesAsync(cancellationToken);
         }
 
-        public Task HardDeleteAsync<TEntity, TPrimaryKey>(TPrimaryKey id, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public async Task HardDeleteAsync<TEntity, TPrimaryKey>(TPrimaryKey id, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            var entity = await context.Set<TEntity>().FirstOrDefaultAsync(GenerateExpression<TEntity>(id));
+            context.Set<TEntity>().Remove(entity);
+            await context.SaveChangesAsync(cancellationToken);
         }
 
         public TEntity Replace<TEntity>(TEntity entity) where TEntity : class, new()
