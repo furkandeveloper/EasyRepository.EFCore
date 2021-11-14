@@ -171,7 +171,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <param name="id">
         /// PK of Entity
         /// </param>
-        void HardDelete(object id);
+        void HardDelete<TEntity>(object id) where TEntity : class, new();
 
         /// <summary>
         /// This method takes <see cref="Object"/> an <see cref="CancellationToken"/>. This method performs hard delete operation async version. In additional returns <see cref="Task"/>
@@ -689,7 +689,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="List{TEntity}"/>
         /// </returns>
-        List<TEntity> GetMultiple<TEntity>(bool asNoTracking, IIncludableQueryable<TEntity, object> includeExpression) where TEntity : class, new();
+        List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new();
 
         /// <summary>
         /// This method takes <see cref="bool"/> and <see cref="IIncludableQueryable{TEntity, TProperty}"/>. This method performs get all with includable entities async version. In additional this method returns <see cref="List{TEntity}"/>
@@ -707,7 +707,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="List{TEntity}"/>
         /// </returns>
-        Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
+        Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
 
         /// <summary>
         /// This method takes <see cref="bool"/>, <see cref="Expression{Func}"/> and <see cref="IIncludableQueryable{TEntity, TProperty}"/>. This method perform get all entities with filter and includable entities. In additional this method returns <see cref="List{TEntity}"/>
@@ -727,7 +727,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="List{TEntity}"/>
         /// </returns>
-        List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, IIncludableQueryable<TEntity, object> includeExpression) where TEntity : class, new();
+        List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new();
 
         /// <summary>
         /// This method takes <see cref="bool"/>, <see cref="Expression{Func}"/>, <see cref="IIncludableQueryable{TEntity, TProperty}"/> and <see cref="CancellationToken"/>. This method perform get all entities with filter and includable entities async version. In additional this method returns <see cref="List{TEntity}"/>
@@ -748,7 +748,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="List{TEntity}"/>
         /// </returns>
-        Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
+        Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
 
         /// <summary>
         /// This method takes <see cref="bool"/> asNoTracking, <see cref="Expression{Func}"/> where expression, <see cref="IIncludableQueryable{TEntity, TProperty}"/> include expression and <see cref="Expression{Func}"/> select expression. This method perform get all projected object with filter and include entities. In additional returns <see cref="List{TProjected}"/>
@@ -774,7 +774,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="List{TProjected}"/>
         /// </returns>
-        List<TProjected> GetMultiple<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, IIncludableQueryable<TEntity, object> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new();
+        List<TProjected> GetMultiple<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new();
 
         /// <summary>
         /// This method takes <see cref="bool"/> asNoTracking, <see cref="Expression{Func}"/> where expression, <see cref="IIncludableQueryable{TEntity, TProperty}"/> include expression, <see cref="Expression{Func}"/> select expression and <see cref="CancellationToken"/> cancellation token. This method perform get all projected object with filter and include entities async version. In additional returns <see cref="List{TProjected}"/>
@@ -801,7 +801,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="List{TProjected}"/>
         /// </returns>
-        Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, IIncludableQueryable<TEntity, object> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
+        Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
 
         /// <summary>
         /// This method takes <see cref="bool"/> asNoTracking, <see cref="{TFilter}"/> pagination filter object. This method performs generate LINQ expressions for Entities over DTOs automatically. In additional returns <see cref="List{TEntity}"/>
@@ -865,7 +865,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="List{TEntity}"/>
         /// </returns>
-        List<TEntity> GetMultiple<TEntity, TFilter>(bool asNoTracking, TFilter filter, IIncludableQueryable<TEntity, object> includeExpression) where TEntity : class, new() where TFilter : FilterBase;
+        List<TEntity> GetMultiple<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new() where TFilter : FilterBase;
 
         /// <summary>
         /// This method takes <see cref="bool"/> asNoTracking, <see cref="{TFilter}"/> paginationable filter object, <see cref="IIncludableQueryable{TEntity, TProperty}"/> and <see cref="CancellationToken"/> cancellation token. This method performs get all entities with apply filter and get all includable entities async version. In additional this method returns <see cref="List{TEntity}"/>
@@ -889,7 +889,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="List{TEntity}"/>
         /// </returns>
-        Task<List<TEntity>> GetMultipleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new() where TFilter : FilterBase;
+        Task<List<TEntity>> GetMultipleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new() where TFilter : FilterBase;
 
         /// <summary>
         /// This method takes <see cref="bool"/> asNoTracking, <see cref="{TFilter}"/> paginationable filter object and <see cref="Expression{Func}"/> project expression. This method performs get all projected objects with apply filter. In additional returns <see cref="List{TEntity}"/>
@@ -971,7 +971,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="List{TEntity}"/>
         /// </returns>
-        List<TProjected> GetMultiple<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, IIncludableQueryable<TEntity, object> includeExpression) where TEntity : class, new() where TFilter : FilterBase;
+        List<TProjected> GetMultiple<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new() where TFilter : FilterBase;
 
         /// <summary>
         /// This method takes <see cref="bool"/> asNoTracking, <see cref="{TFilter}"/> paginationable filter object, <see cref="Expression{Func}"/> project expression and <see cref="IIncludableQueryable{TEntity, TProperty}"/> include expression. This method performs get all projected objects with apply filter and get all includable entities async version. In additional this method returns <see cref="List{TEntity}"/>
@@ -1001,7 +1001,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="List{TEntity}"/>
         /// </returns>
-        Task<List<TProjected>> GetMultipleAsync<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new() where TFilter : FilterBase;
+        Task<List<TProjected>> GetMultipleAsync<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new() where TFilter : FilterBase;
 
 
         /// <summary>
@@ -1057,7 +1057,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="{TEntity}"/>
         /// </returns>
-        TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, IIncludableQueryable<TEntity, object> includeExpression) where TEntity : class, new();
+        TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new();
 
         /// <summary>
         /// This method takes <see cref="bool"/> asNoTracking, <see cref="Expression{Func}"/> and <see cref="IIncludableQueryable{TEntity, TProperty}"/> include expression. This method performs get entity with apply filter and includable entities async version. In additional this method returns <see cref="{TEntity}"/>
@@ -1078,7 +1078,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="{TEntity}"/>
         /// </returns>
-        Task<TEntity> GetSingleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
+        Task<TEntity> GetSingleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
 
         /// <summary>
         /// This method takes <see cref="bool"/> asNoTracking, <see cref="Expression{Func}"/> where expression and <see cref="Expression{Func}"/> project the expression. This method performs get projected object with apply filter. In additional returns <see cref="{TProjected}"/>
@@ -1151,7 +1151,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="{TProjected}"/>
         /// </returns>
-        TProjected GetSingle<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, IIncludableQueryable<TEntity, object> includeExpression) where TEntity : class, new();
+        TProjected GetSingle<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new();
 
 
         /// <summary>
@@ -1179,7 +1179,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="{TProjected}"/>
         /// </returns>
-        Task<TProjected> GetSingleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
+        Task<TProjected> GetSingleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
 
         /// <summary>
         /// This method takes <see cref="bool"/> asNoTracking and <see cref="{TFilter}"/> filter object. This object must be type <see cref="FilterBase"/>. This method perform get entity with filter. In additional returns <see cref="{TEntity}"/>
@@ -1243,7 +1243,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="{TEntity}"/>
         /// </returns>
-        TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter, IIncludableQueryable<TEntity, object> includeExpression) where TEntity : class, new() where TFilter : FilterBase;
+        TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new() where TFilter : FilterBase;
 
         /// <summary>
         /// This method takes <see cref="bool"/> asNoTracking, <see cref="IIncludableQueryable{TEntity, TProperty}"/> include expression, <see cref="CancellationToken"/> cancellation token and <see cref="{TFilter}"/> filterable object <see cref="FilterBase"/>. This method performs get and includable entity with filter. In additional returns <see cref="{TEntity}"/>
@@ -1267,7 +1267,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="{TEntity}"/>
         /// </returns>
-        Task<TEntity> GetSingleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new() where TFilter : FilterBase;
+        Task<TEntity> GetSingleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new() where TFilter : FilterBase;
 
         /// <summary>
         /// This method takes <see cref="bool"/> asNoTracking, <see cref="Expression{Func}"/> select expression and <see cref="{TFilter}"/> filterable object <see cref="FilterBase"/>. This method performs get projected object with filter. In additional returns <see cref="{TProjected}"/>
@@ -1331,7 +1331,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="{TProjected}"/>
         /// </returns>
-        TProjected GetSingle<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, IIncludableQueryable<TEntity, object> includeExpression) where TEntity : class, new() where TFilter : FilterBase;
+        TProjected GetSingle<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new() where TFilter : FilterBase;
 
         /// <summary>
         /// This method takes <see cref="bool"/> asNoTracking, <see cref="Expression{Func}"/> select expression, <see cref="IIncludableQueryable{TEntity, TProperty}"/> include expression, <see cref="CancellationToken"/> cancellation token and <see cref="{TFilter}"/> filterable object <see cref="FilterBase"/>. This method performs get projected object with filter. In additional returns <see cref="{TProjected}"/>
@@ -1355,7 +1355,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="{TProjected}"/>
         /// </returns>
-        Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new() where TFilter : FilterBase;
+        Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new() where TFilter : FilterBase;
 
 
         /// <summary>
@@ -1411,7 +1411,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="{TEntity}"/>
         /// </returns>
-        TEntity GetById<TEntity>(bool asNoTracking, object id, IIncludableQueryable<TEntity, object> includeExpression) where TEntity : class, new();
+        TEntity GetById<TEntity>(bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new();
 
         /// <summary>
         /// This method takes <see cref="bool"/> asNoTracking, <see cref="object"/> id, <see cref="IIncludableQueryable{TEntity, TProperty}"/> include expression and <see cref="CancellationToken"/> cancellation token. This method performs get entity by id with includable entities. In additional this method returns <see cref="{TEntity}"/>
@@ -1432,7 +1432,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="{TEntity}"/>
         /// </returns>
-        TEntity GetByIdAsync<TEntity>(bool asNoTracking, object id, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
+        TEntity GetByIdAsync<TEntity>(bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
 
 
         /// <summary>
@@ -1507,7 +1507,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="{TProjected}"/>
         /// </returns>
-        TProjected GetById<TEntity, TProjected>(bool asNoTracking, object id, IIncludableQueryable<TEntity, TProjected> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new();
+        TProjected GetById<TEntity, TProjected>(bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new();
 
         /// <summary>
         /// This method takes <see cref="bool"/> asnoTracking, <see cref="object"/> id, <see cref="IIncludableQueryable{TEntity, TProperty}"/> and <see cref="Expression{Func}"/> project expression. This method performs get projected object by id with includable entities async version. In additional this method returns <see cref="{TProjected}"/>
@@ -1534,7 +1534,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="{TProjected}"/>
         /// </returns>
-        Task<TProjected> GetByIdAsync<TEntity, TProjected>(bool asNoTracking, object id, IIncludableQueryable<TEntity, TProjected> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
+        Task<TProjected> GetByIdAsync<TEntity, TProjected>(bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
 
 
         /// <summary>
@@ -1549,7 +1549,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="bool"/>
         /// </returns>
-        bool Any<TEntity>(Expression<Func<TEntity,bool>> anyExpression) where TEntity : class, new();
+        bool Any<TEntity>(Expression<Func<TEntity, bool>> anyExpression) where TEntity : class, new();
 
         /// <summary>
         /// This method takes <see cref="Expression{Func}"/> any expression and <see cref="CancellationToken"/> cancellation token. This method perform exist operation for condition. In additional returns <see cref="bool"/>
