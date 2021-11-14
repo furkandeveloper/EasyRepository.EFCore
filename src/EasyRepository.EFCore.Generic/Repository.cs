@@ -2,9 +2,11 @@
 using AutoFilterer.Types;
 using EasyRepository.EFCore.Abstractions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -139,301 +141,53 @@ namespace EasyRepository.EFCore.Generic
             return count;
         }
 
-        public TEntity GetById<TEntity>(bool asNoTracking, object id) where TEntity : class, new()
+        private Expression<Func<TEntity, bool>> GenerateExpression<TEntity>(object id)
         {
-            throw new NotImplementedException();
-        }
+            var type = context.Model.FindEntityType(typeof(TEntity));
+            string pk = type.FindPrimaryKey().Properties.Select(s => s.Name).FirstOrDefault();
+            Type pkType = type.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
 
-        public TEntity GetById<TEntity>(bool asNoTracking, object id, IIncludableQueryable<TEntity, object> includeExpression) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
+            object value = Convert.ChangeType(id, pkType, CultureInfo.InvariantCulture);
 
-        public TProjected GetById<TEntity, TProjected>(bool asNoTracking, object id, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
+            ParameterExpression pe = Expression.Parameter(typeof(TEntity), "entity");
+            MemberExpression me = Expression.Property(pe, pk);
+            ConstantExpression constant = Expression.Constant(value, pkType);
+            BinaryExpression body = Expression.Equal(me, constant);
+            Expression<Func<TEntity, bool>> expression = Expression.Lambda<Func<TEntity, bool>>(body, new[] { pe });
 
-        public TProjected GetById<TEntity, TProjected>(bool asNoTracking, object id, IIncludableQueryable<TEntity, TProjected> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TEntity> GetByIdAsync<TEntity>(bool asNoTracking, object id, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public TEntity GetByIdAsync<TEntity>(bool asNoTracking, object id, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TProjected> GetByIdAsync<TEntity, TProjected>(bool asNoTracking, object id, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TProjected> GetByIdAsync<TEntity, TProjected>(bool asNoTracking, object id, IIncludableQueryable<TEntity, TProjected> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<TEntity> GetMultiple<TEntity>(bool asNoTracking) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<TProjected> GetMultiple<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<TProjected> GetMultiple<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<TEntity> GetMultiple<TEntity>(bool asNoTracking, IIncludableQueryable<TEntity, object> includeExpression) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, IIncludableQueryable<TEntity, object> includeExpression) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<TProjected> GetMultiple<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, IIncludableQueryable<TEntity, object> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<TEntity> GetMultiple<TEntity, TFilter>(bool asNoTracking, TFilter filter)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<TEntity> GetMultiple<TEntity, TFilter>(bool asNoTracking, TFilter filter, IIncludableQueryable<TEntity, object> includeExpression)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<TProjected> GetMultiple<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<TProjected> GetMultiple<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, IIncludableQueryable<TEntity, object> includeExpression)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, IIncludableQueryable<TEntity, object> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<TEntity>> GetMultipleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, CancellationToken cancellationToken = default)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<TEntity>> GetMultipleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<TProjected>> GetMultipleAsync<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<TProjected>> GetMultipleAsync<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IQueryable<TEntity> GetQueryable<TEntity>(Expression<Func<TEntity, bool>> filter) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, IIncludableQueryable<TEntity, object> includeExpression) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public TProjected GetSingle<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public TProjected GetSingle<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, IIncludableQueryable<TEntity, object> includeExpression) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter, IIncludableQueryable<TEntity, object> includeExpression)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public TProjected GetSingle<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public TProjected GetSingle<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, IIncludableQueryable<TEntity, object> includeExpression)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TEntity> GetSingleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TEntity> GetSingleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TProjected> GetSingleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TProjected> GetSingleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TEntity> GetSingleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, CancellationToken cancellationToken = default)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TEntity> GetSingleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, IIncludableQueryable<TEntity, object> includeExpression, CancellationToken cancellationToken = default)
-            where TEntity : class, new()
-            where TFilter : FilterBase
-        {
-            throw new NotImplementedException();
+            return expression;
         }
 
         public void HardDelete<TEntity>(TEntity entity) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            context.Set<TEntity>().Remove(entity);
+            context.SaveChanges();
         }
 
-        public void HardDelete(object id)
+        public void HardDelete<TEntity>(object id) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            var entity = context.Set<TEntity>().Find(id);
+            context.Set<TEntity>().Remove(entity);
+            context.SaveChanges();
         }
 
         public void HardDelete<TEntity, TPrimaryKey>(TEntity entity) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            context.Set<TEntity>().Remove(entity);
+            context.SaveChanges();
         }
 
         public void HardDelete<TEntity, TPrimaryKey>(TPrimaryKey id) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            var entity = context.Set<TEntity>().FirstOrDefault(GenerateExpression<TEntity>(id));
+            context.Set<TEntity>().Remove(entity);
+            context.SaveChanges();
         }
 
-        public Task HardDeleteAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public async Task HardDeleteAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            context.Set<TEntity>().Remove(entity);
+            await context.SaveChangesAsync(cancellationToken);
         }
 
         public Task HardDeleteAsync(object id, CancellationToken cancellationToken = default)
@@ -527,6 +281,278 @@ namespace EasyRepository.EFCore.Generic
         }
 
         public Task<IEnumerable<TEntity>> UpdateRangeAsync<TEntity, TPrimaryKey>(IEnumerable<TEntity> entites, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<TEntity> GetQueryable<TEntity>(Expression<Func<TEntity, bool>> filter) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<TEntity> GetMultiple<TEntity>(bool asNoTracking) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<TProjected> GetMultiple<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<TProjected> GetMultiple<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<TProjected> GetMultiple<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<TEntity> GetMultiple<TEntity, TFilter>(bool asNoTracking, TFilter filter)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<TEntity>> GetMultipleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, CancellationToken cancellationToken = default)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<TEntity> GetMultiple<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<TEntity>> GetMultipleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<TProjected> GetMultiple<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<TProjected>> GetMultipleAsync<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<TProjected> GetMultiple<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<TProjected>> GetMultipleAsync<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TEntity> GetSingleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TEntity> GetSingleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public TProjected GetSingle<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TProjected> GetSingleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public TProjected GetSingle<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TProjected> GetSingleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TEntity> GetSingleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, CancellationToken cancellationToken = default)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TEntity> GetSingleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public TProjected GetSingle<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public TProjected GetSingle<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+            where TEntity : class, new()
+            where TFilter : FilterBase
+        {
+            throw new NotImplementedException();
+        }
+
+        public TEntity GetById<TEntity>(bool asNoTracking, object id) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TEntity> GetByIdAsync<TEntity>(bool asNoTracking, object id, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public TEntity GetById<TEntity>(bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public TEntity GetByIdAsync<TEntity>(bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public TProjected GetById<TEntity, TProjected>(bool asNoTracking, object id, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TProjected> GetByIdAsync<TEntity, TProjected>(bool asNoTracking, object id, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public TProjected GetById<TEntity, TProjected>(bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TProjected> GetByIdAsync<TEntity, TProjected>(bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
             throw new NotImplementedException();
         }
