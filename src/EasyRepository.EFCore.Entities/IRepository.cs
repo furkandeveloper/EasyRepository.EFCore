@@ -427,13 +427,13 @@ namespace EasyRepository.EFCore.Abstractions
         /// <typeparam name="TPrimaryKey">
         /// Type of Primary Key
         /// </typeparam>
-        /// <param name="entites">
+        /// <param name="entities">
         /// The entites to be updated
         /// </param>
         /// <returns>
         /// Returns <see cref="Task{TResult}"/>
         /// </returns>
-        Task<IEnumerable<TEntity>> UpdateRangeAsync<TEntity, TPrimaryKey>(IEnumerable<TEntity> entites, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>;
+        Task<IEnumerable<TEntity>> UpdateRangeAsync<TEntity, TPrimaryKey>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>;
 
         /// <summary>
         /// This method takes <see cref="{TEntity}"/> performs replace operation. In additional returns <see cref="{TEntity}"/>

@@ -271,44 +271,64 @@ namespace EasyRepository.EFCore.Generic
             await ReplaceAsync<TEntity, TPrimaryKey>(entity, cancellationToken).ConfigureAwait(false);
         }
 
-        public TEntity Update<TEntity>(TEntity entity) where TEntity : class, new()
+        public virtual TEntity Update<TEntity>(TEntity entity) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            context.Set<TEntity>().Update(entity);
+            context.SaveChanges();
+            return entity;
         }
 
-        public TEntity Update<TEntity, TPrimaryKey>(TEntity entity) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public virtual TEntity Update<TEntity, TPrimaryKey>(TEntity entity) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            entity.ModificationDate = DateTime.UtcNow;
+            context.Set<TEntity>().Update(entity);
+            context.SaveChanges();
+            return entity;
         }
 
-        public Task<TEntity> UpdateAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public virtual async Task<TEntity> UpdateAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            context.Set<TEntity>().Update(entity);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return entity;
         }
 
-        public Task<TEntity> UpdateAsync<TEntity, TPrimaryKey>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public virtual async Task<TEntity> UpdateAsync<TEntity, TPrimaryKey>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            entity.ModificationDate = DateTime.UtcNow;
+            context.Set<TEntity>().Update(entity);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return entity;
         }
 
-        public IEnumerable<TEntity> UpdateRange<TEntity>(IEnumerable<TEntity> entities) where TEntity : class, new()
+        public virtual IEnumerable<TEntity> UpdateRange<TEntity>(IEnumerable<TEntity> entities) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            context.Set<TEntity>().UpdateRange(entities);
+            context.SaveChanges();
+            return entities;
         }
 
-        public IEnumerable<TEntity> UpdateRange<TEntity, TPrimaryKey>(IEnumerable<TEntity> entities) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public virtual IEnumerable<TEntity> UpdateRange<TEntity, TPrimaryKey>(IEnumerable<TEntity> entities) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            entities.ToList().ForEach(a => a.ModificationDate = DateTime.UtcNow);
+            context.Set<TEntity>().UpdateRange(entities);
+            context.SaveChanges();
+            return entities;
         }
 
-        public Task<IEnumerable<TEntity>> UpdateRangeAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public virtual async Task<IEnumerable<TEntity>> UpdateRangeAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            context.Set<TEntity>().UpdateRange(entities);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return entities;
         }
 
-        public Task<IEnumerable<TEntity>> UpdateRangeAsync<TEntity, TPrimaryKey>(IEnumerable<TEntity> entites, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
+        public virtual async Task<IEnumerable<TEntity>> UpdateRangeAsync<TEntity, TPrimaryKey>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : EasyBaseEntity<TPrimaryKey>
         {
-            throw new NotImplementedException();
+            entities.ToList().ForEach(a => a.ModificationDate = DateTime.UtcNow);
+            context.Set<TEntity>().UpdateRange(entities);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return entities;
         }
 
         public IQueryable<TEntity> GetQueryable<TEntity>() where TEntity : class, new()
