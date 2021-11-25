@@ -497,100 +497,122 @@ namespace EasyRepository.EFCore.Generic
             return await queryable.Select(projectExpression).ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression) where TEntity : class, new()
+        public virtual TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            var queryable = FindQueryable<TEntity>(asNoTracking).Where(whereExpression);
+            return queryable.FirstOrDefault();
         }
 
-        public Task<TEntity> GetSingleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public virtual async Task<TEntity> GetSingleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            var queryable = FindQueryable<TEntity>(asNoTracking).Where(whereExpression);
+            return await queryable.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new()
+        public virtual TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            var queryable = FindQueryable<TEntity>(asNoTracking).Where(whereExpression);
+            queryable = includeExpression(queryable);
+            return queryable.FirstOrDefault();
         }
 
-        public Task<TEntity> GetSingleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public async virtual Task<TEntity> GetSingleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            var queryable = FindQueryable<TEntity>(asNoTracking).Where(whereExpression);
+            queryable = includeExpression(queryable);
+            return await queryable.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public TProjected GetSingle<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new()
+        public virtual TProjected GetSingle<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            return FindQueryable<TEntity>(asNoTracking).Where(whereExpression).Select(projectExpression).FirstOrDefault();
         }
 
-        public Task<TProjected> GetSingleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public virtual async Task<TProjected> GetSingleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            return await FindQueryable<TEntity>(asNoTracking).Where(whereExpression).Select(projectExpression).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public TProjected GetSingle<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new()
+        public virtual TProjected GetSingle<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            var queryable = FindQueryable<TEntity>(asNoTracking).Where(whereExpression);
+            queryable = includeExpression(queryable);
+            return queryable.Select(projectExpression).FirstOrDefault();
         }
 
-        public Task<TProjected> GetSingleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
+        public virtual async Task<TProjected> GetSingleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new()
         {
-            throw new NotImplementedException();
+            var queryable = FindQueryable<TEntity>(asNoTracking).Where(whereExpression);
+            queryable = includeExpression(queryable);
+            return await queryable.Select(projectExpression).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter)
+        public virtual TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter)
             where TEntity : class, new()
             where TFilter : FilterBase
         {
-            throw new NotImplementedException();
+            var queryable = FindQueryable<TEntity>(asNoTracking).ApplyFilter(filter);
+            return queryable.FirstOrDefault();
         }
 
-        public Task<TEntity> GetSingleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity> GetSingleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, CancellationToken cancellationToken = default)
             where TEntity : class, new()
             where TFilter : FilterBase
         {
-            throw new NotImplementedException();
+            var queryable = FindQueryable<TEntity>(asNoTracking).ApplyFilter(filter);
+            return await queryable.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        public virtual TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
             where TEntity : class, new()
             where TFilter : FilterBase
         {
-            throw new NotImplementedException();
+            var queryable = FindQueryable<TEntity>(asNoTracking).ApplyFilter(filter);
+            queryable = includeExpression(queryable);
+            return queryable.FirstOrDefault();
         }
 
-        public Task<TEntity> GetSingleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity> GetSingleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
             where TEntity : class, new()
             where TFilter : FilterBase
         {
-            throw new NotImplementedException();
+            var queryable = FindQueryable<TEntity>(asNoTracking).ApplyFilter(filter);
+            queryable = includeExpression(queryable);
+            return await queryable.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public TProjected GetSingle<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
+        public virtual TProjected GetSingle<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
             where TEntity : class, new()
             where TFilter : FilterBase
         {
-            throw new NotImplementedException();
+            var queryable = FindQueryable<TEntity>(asNoTracking).ApplyFilter(filter);
+            return queryable.Select(projectExpression).FirstOrDefault();
         }
 
-        public Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
+        public virtual async Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
             where TEntity : class, new()
             where TFilter : FilterBase
         {
-            throw new NotImplementedException();
+            var queryable = FindQueryable<TEntity>(asNoTracking).ApplyFilter(filter);
+            return await queryable.Select(projectExpression).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public TProjected GetSingle<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        public virtual TProjected GetSingle<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
             where TEntity : class, new()
             where TFilter : FilterBase
         {
-            throw new NotImplementedException();
+            var queryable = FindQueryable<TEntity>(asNoTracking).ApplyFilter(filter);
+            queryable = includeExpression(queryable);
+            return queryable.Select(projectExpression).FirstOrDefault();
         }
 
-        public Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+        public virtual async Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
             where TEntity : class, new()
             where TFilter : FilterBase
         {
-            throw new NotImplementedException();
+            var queryable = FindQueryable<TEntity>(asNoTracking).ApplyFilter(filter);
+            queryable = includeExpression(queryable);
+            return await queryable.Select(projectExpression).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public TEntity GetById<TEntity>(bool asNoTracking, object id) where TEntity : class, new()
