@@ -11,6 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyRepository.EFCore.Gener
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CB94A892-F59B-42D2-BE0D-31E0879CEEE7}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 		common.props = common.props
 		README.md = README.md
 	EndProjectSection
