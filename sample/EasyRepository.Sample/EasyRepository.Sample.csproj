@@ -3,7 +3,9 @@
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
 	</PropertyGroup>
-
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="AutoFilterer.Swagger" Version="2.8.0" />
 		<PackageReference Include="AspNetCore.MarkdownDocumenting" Version="2.3.1" />
