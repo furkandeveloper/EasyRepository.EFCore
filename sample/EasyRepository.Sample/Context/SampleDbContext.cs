@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EasyRepository.Sample.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,20 @@ namespace EasyRepository.Sample.Context
 
         protected SampleDbContext()
         {
+        }
+
+        public virtual DbSet<Author> Authors { get; set;}
+
+        public virtual DbSet<Book> Books { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
         }
     }
 }
