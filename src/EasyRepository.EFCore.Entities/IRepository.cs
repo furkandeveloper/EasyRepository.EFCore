@@ -1432,7 +1432,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Returns <see cref="{TEntity}"/>
         /// </returns>
-        TEntity GetByIdAsync<TEntity>(bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
+        Task<TEntity> GetByIdAsync<TEntity>(bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default) where TEntity : class, new();
 
 
         /// <summary>
