@@ -82,15 +82,12 @@ namespace EasyRepository.Sample
                 options.DisplayRequestDuration();
                 options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
                 options.RoutePrefix = "api-docs";
-                options.SwaggerEndpoint("/swagger/EasyProfiler/swagger.json", "EasyProfilerSwagger");
+                options.SwaggerEndpoint("/swagger/EasyRepository/swagger.json", "EasyProfilerSwagger");
             });
             app.UseDocumentation(opts => this.Configuration.Bind("DocumentationOptions", opts));
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapControllers();
             });
         }
     }
