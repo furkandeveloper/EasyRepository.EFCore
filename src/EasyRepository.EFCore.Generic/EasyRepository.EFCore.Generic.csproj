@@ -8,5 +8,11 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\EasyRepository.EFCore.Abstractions\EasyRepository.EFCore.Abstractions.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <None Include="folders.png">
+	    <Pack>True</Pack>
+	    <PackagePath></PackagePath>
+	  </None>
+	</ItemGroup>
 
 </Project>
