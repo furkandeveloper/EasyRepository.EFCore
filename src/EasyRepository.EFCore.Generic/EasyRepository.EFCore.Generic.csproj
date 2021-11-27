@@ -1,7 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<Import Project="..\..\common.props" />
-
+	<PropertyGroup>
+		<PackageIcon>folders.png</PackageIcon>
+		<PackageIconUrl />
+	</PropertyGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\EasyRepository.EFCore.Abstractions\EasyRepository.EFCore.Abstractions.csproj" />
 	</ItemGroup>
