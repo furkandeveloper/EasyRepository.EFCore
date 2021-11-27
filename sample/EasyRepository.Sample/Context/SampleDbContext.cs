@@ -37,6 +37,21 @@ namespace EasyRepository.Sample.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Author>(entity =>
+            {
+                entity
+                    .HasMany(m => m.Books)
+                    .WithOne(o => o.Author)
+                    .HasForeignKey(fk => fk.AuthorId);
+            });
+
+            modelBuilder.Entity<Book>(entity =>
+            {
+                entity
+                    .HasOne(o => o.Author)
+                    .WithMany(m => m.Books)
+                    .HasForeignKey(fk => fk.AuthorId);
+            });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
