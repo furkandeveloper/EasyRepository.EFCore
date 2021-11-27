@@ -10,6 +10,8 @@ namespace EasyRepository.Sample.Entities
     {
         public string Title { get; set; }
 
+        public Guid AuthorId { get; set; }
+
         public int TotalPage { get; set; }
 
         public virtual Author Author { get; set; }
