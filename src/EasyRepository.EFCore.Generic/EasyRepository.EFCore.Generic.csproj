@@ -2,8 +2,4 @@
 
 	<Import Project="..\..\common.props" />
 
-	<ItemGroup>
-	  <ProjectReference Include="..\EasyRepository.EFCore.Entities\EasyRepository.EFCore.Abstractions.csproj" />
-	</ItemGroup>
-
 </Project>
