@@ -28,5 +28,3 @@ The generic repository pattern implements in a separate class library project. .
 
 ### Documentation
 Visit [Wiki](https://github.com/furkandeveloper/EasyRepository.EFCore/wiki) page for documentation.
-
-***
