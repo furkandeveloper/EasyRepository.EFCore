@@ -11,7 +11,7 @@
 ***
 
 ## Give a Star 🌟
-If you liked the project or if **EasyRepositor.EFCore** helped you, please give a star.
+If you liked the project or if **EasyRepository.EFCore** helped you, please give a star.
 
 ***
 
