@@ -24,7 +24,9 @@ If you liked the project or if **EasyRepositor.EFCore** helped you, please give 
 
 The generic repository pattern implements in a separate class library project. ... The repository pattern is intended to create an Abstraction layer between the Data Access layer and Business Logic layer of an Application. It is a data access pattern that prompts a more loosely coupled approach to data access.
 
+***
+
 ### Documentation
-Visit [Wiki](https://github.com/furkandeveloper/EasyRepository/wiki) page for documentation.
+Visit [Wiki](https://github.com/furkandeveloper/EasyRepository.EFCore/wiki) page for documentation.
 
 ***
