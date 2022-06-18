@@ -4,17 +4,13 @@ using EasyRepository.Sample.Context;
 using MarkdownDocumenting.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace EasyRepository.Sample
 {
@@ -31,12 +27,13 @@ namespace EasyRepository.Sample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.ApplyEasyRepository<SampleDbContext>();
 
             services.AddDbContext<SampleDbContext>(options =>
             {
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
             }, ServiceLifetime.Transient);
+            
+            services.ApplyEasyRepository<SampleDbContext>();
 
             services.AddSwaggerGen(options =>
             {
