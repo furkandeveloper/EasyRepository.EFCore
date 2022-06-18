@@ -10,6 +10,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EasyRepository.EFCore.Generic
 {
@@ -57,7 +58,7 @@ namespace EasyRepository.EFCore.Generic
         {
             entity.CreationDate = DateTime.UtcNow;
             await context.Set<TEntity>().AddAsync(entity, cancellationToken).ConfigureAwait(false);
-            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            //await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return entity;
         }
 
@@ -137,6 +138,16 @@ namespace EasyRepository.EFCore.Generic
         {
             int count = await context.Set<TEntity>().ApplyFilter(filter).CountAsync(cancellationToken).ConfigureAwait(false);
             return count;
+        }
+
+        public void SaveChanges()
+        {
+            context.SaveChanges();
+        }
+
+        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
         private Expression<Func<TEntity, bool>> GenerateExpression<TEntity>(object id)
