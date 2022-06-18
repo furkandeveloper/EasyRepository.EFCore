@@ -1658,7 +1658,7 @@ namespace EasyRepository.EFCore.Abstractions
         /// <summary>
         /// This method provides save changes for changes in current transaction
         /// </summary>
-        void SaveChanges();
+        void Complete();
         
         /// <summary>
         /// This method takes <see cref="CancellationToken"/> cancellation token in additional this method provides save changes for changes in current transactions
@@ -1667,6 +1667,6 @@ namespace EasyRepository.EFCore.Abstractions
         /// <returns>
         /// Task. <see cref="Task"/>
         /// </returns>
-        Task SaveChangesAsync(CancellationToken cancellationToken = default);
+        Task CompleteAsync(CancellationToken cancellationToken = default);
     }
 }

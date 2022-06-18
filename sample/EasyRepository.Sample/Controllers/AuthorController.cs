@@ -41,7 +41,7 @@ namespace EasyRepository.Sample.Controllers
                  AuthorId = Guid.NewGuid()
              });
              
-            await _unitOfWork.Repository.SaveChangesAsync();
+            await _unitOfWork.Repository.CompleteAsync();
             return Ok(entity);
         }
 

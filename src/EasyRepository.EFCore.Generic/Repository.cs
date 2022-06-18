@@ -132,12 +132,12 @@ namespace EasyRepository.EFCore.Generic
             return count;
         }
 
-        public void SaveChanges()
+        public void Complete()
         {
             _context.SaveChanges();
         }
 
-        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+        public async Task CompleteAsync(CancellationToken cancellationToken = default)
         {
             await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
