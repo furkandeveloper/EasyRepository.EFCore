@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EasyRepository.EFCore.Generic;
 
 namespace EasyRepository.Sample.Controllers
 {
@@ -16,21 +17,31 @@ namespace EasyRepository.Sample.Controllers
     public class AuthorController : ControllerBase
     {
         private readonly IRepository repository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AuthorController(IRepository repository)
+        public AuthorController(IRepository repository, IUnitOfWork unitOfWork)
         {
             this.repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost]
         public async Task<IActionResult> AddAuthorAsync([FromBody] AuthorRequestDto dto)
         {
-            var entity = await repository.AddAsync<Author, Guid>(new Author
+            var entity = await _unitOfWork.Repository.AddAsync<Author, Guid>(new Author
             {
                 Name = dto.Name,
                 Surname = dto.Surname
-            }, default);
+            });
 
+             var book = await _unitOfWork.Repository.AddAsync<Book, Guid>(new Book
+             {
+                 Title = "Book 123",
+                 TotalPage = 124,
+                 AuthorId = Guid.NewGuid()
+             });
+             
+            await _unitOfWork.Repository.CompleteAsync();
             return Ok(entity);
         }
 

@@ -1,6 +1,7 @@
 ﻿using EasyRepository.EFCore.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace EasyRepository.EFCore.Generic
 {
@@ -30,8 +31,17 @@ namespace EasyRepository.EFCore.Generic
                 typeof(IRepository),
                 serviceProvider =>
                 {
-                    TDbContext dbContext = ActivatorUtilities.CreateInstance<TDbContext>(serviceProvider);
+                    var dbContext = ActivatorUtilities.CreateInstance<TDbContext>(serviceProvider);
                     return new Repository(dbContext);
+                },
+                serviceLifetime));
+            
+            services.Add(new ServiceDescriptor(
+                typeof(IUnitOfWork),
+                serviceProvider =>
+                {
+                    var repository = serviceProvider.GetService<IRepository>();
+                    return new UnitOfWork(repository);
                 },
                 serviceLifetime));
             return services;

@@ -1654,5 +1654,19 @@ namespace EasyRepository.EFCore.Abstractions
         /// Returns <see cref="int"/>
         /// </returns>
         Task<int> CountAsync<TEntity, TFilter>(TFilter filter, CancellationToken cancellationToken = default) where TEntity : class, new() where TFilter : FilterBase;
+
+        /// <summary>
+        /// This method provides save changes for changes in current transaction
+        /// </summary>
+        void Complete();
+        
+        /// <summary>
+        /// This method takes <see cref="CancellationToken"/> cancellation token in additional this method provides save changes for changes in current transactions
+        /// </summary>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>
+        /// Task. <see cref="Task"/>
+        /// </returns>
+        Task CompleteAsync(CancellationToken cancellationToken = default);
     }
 }

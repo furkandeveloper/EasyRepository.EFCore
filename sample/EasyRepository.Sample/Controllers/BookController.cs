@@ -16,7 +16,6 @@ namespace EasyRepository.Sample.Controllers
     public class BookController : ControllerBase
     {
         private readonly IRepository repository;
-
         public BookController(IRepository repository)
         {
             this.repository = repository;
