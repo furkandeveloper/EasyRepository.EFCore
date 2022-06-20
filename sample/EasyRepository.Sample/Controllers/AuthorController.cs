@@ -16,12 +16,10 @@ namespace EasyRepository.Sample.Controllers
     [Route("[controller]")]
     public class AuthorController : ControllerBase
     {
-        private readonly IRepository repository;
         private readonly IUnitOfWork _unitOfWork;
 
         public AuthorController(IRepository repository, IUnitOfWork unitOfWork)
         {
-            this.repository = repository;
             _unitOfWork = unitOfWork;
         }
 
@@ -48,7 +46,7 @@ namespace EasyRepository.Sample.Controllers
         [HttpPost("range")]
         public async Task<IActionResult> AddAuthorAsync([FromBody] List<AuthorRequestDto> dto)
         {
-            var entity = await repository.AddRangeAsync<Author, Guid>(dto.Select(s => new Author
+            var entity = await _unitOfWork.Repository.AddRangeAsync<Author, Guid>(dto.Select(s => new Author
             {
                 Name = s.Name,
                 Surname = s.Surname
@@ -60,47 +58,47 @@ namespace EasyRepository.Sample.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAuthorAsync([FromRoute] Guid id, [FromBody] AuthorRequestDto dto)
         {
-            var entity = await repository.GetByIdAsync<Author>(true, id);
+            var entity = await _unitOfWork.Repository.GetByIdAsync<Author>(true, id);
             entity.Name = dto.Name;
             entity.Surname = dto.Surname;
-            var result = await repository.UpdateAsync<Author, Guid>(entity);
+            var result = await _unitOfWork.Repository.UpdateAsync<Author, Guid>(entity);
             return Ok(result);
         }
 
         [HttpDelete("{id}/hard")]
         public async Task<IActionResult> HardDeleteAsync([FromRoute] Guid id)
         {
-            var entity = await repository.GetByIdAsync<Author>(true, id);
-            await repository.HardDeleteAsync<Author>(entity);
+            var entity = await _unitOfWork.Repository.GetByIdAsync<Author>(true, id);
+            await _unitOfWork.Repository.HardDeleteAsync<Author>(entity);
             return NoContent();
         }
 
         [HttpDelete("{id}/soft")]
         public async Task<IActionResult> SoftDeleteAsync([FromRoute] Guid id)
         {
-            var entity = await repository.GetByIdAsync<Author>(true, id);
-            await repository.SoftDeleteAsync<Author, Guid>(entity);
+            var entity = await _unitOfWork.Repository.GetByIdAsync<Author>(true, id);
+            await _unitOfWork.Repository.SoftDeleteAsync<Author, Guid>(entity);
             return NoContent();
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
         {
-            var entity = await repository.GetByIdAsync<Author>(true, id);
+            var entity = await _unitOfWork.Repository.GetByIdAsync<Author>(true, id);
             return Ok(entity);
         }
 
         [HttpGet("multiple")]
         public async Task<IActionResult> GetMultipleAsync()
         {
-            var entities = await repository.GetMultipleAsync<Author>(false);
+            var entities = await _unitOfWork.Repository.GetMultipleAsync<Author>(false);
             return Ok(entities);
         }
 
         [HttpGet("selectable-multiple")]
         public async Task<IActionResult> GetSelectableMultipleAsync()
         {
-            var entities = await repository.GetMultipleAsync<Author, object>(false, select => new
+            var entities = await _unitOfWork.Repository.GetMultipleAsync<Author, object>(false, select => new
             {
                 SelectName = select.Name,
                 SelectDate = select.CreationDate
@@ -111,7 +109,7 @@ namespace EasyRepository.Sample.Controllers
         [HttpGet("filterable-multiple")]
         public async Task<IActionResult> GetFilterableMultipleAsync([FromQuery] AuthorFilterDto dto)
         {
-            var entities = await repository.GetMultipleAsync<Author, AuthorFilterDto, object>(false, dto, select => new
+            var entities = await _unitOfWork.Repository.GetMultipleAsync<Author, AuthorFilterDto, object>(false, dto, select => new
             {
                 SelectName = select.Name,
                 SelectDate = select.CreationDate
@@ -123,7 +121,7 @@ namespace EasyRepository.Sample.Controllers
         public async Task<IActionResult> GetIncludeableFilterableMultipleAsync([FromQuery] AuthorFilterDto dto)
         {
             Func<IQueryable<Author>, IIncludableQueryable<Author, object>> include = a => a.Include(i => i.Books);
-            var entities = await repository.GetMultipleAsync<Author, AuthorFilterDto, object>(false, dto, select => new
+            var entities = await _unitOfWork.Repository.GetMultipleAsync<Author, AuthorFilterDto, object>(false, dto, select => new
             {
                 SelectName = select.Name,
                 SelectDate = select.CreationDate
