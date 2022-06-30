@@ -14,5 +14,8 @@
 	    <PackagePath></PackagePath>
 	  </None>
 	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="6.1.0" />
+	</ItemGroup>
 
 </Project>
