@@ -1,9 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+    <Import Project="..\..\common.props"/>
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <PackageIcon>folders.png</PackageIcon>
+        <PackageIconUrl/>
     </PropertyGroup>
-
+    <ItemGroup>
+        <None Update="folders.png">
+            <Pack>True</Pack>
+        </None>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="6.1.0"/>
+    </ItemGroup>
 </Project>
