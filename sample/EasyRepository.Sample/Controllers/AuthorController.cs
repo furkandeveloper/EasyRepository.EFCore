@@ -29,7 +29,8 @@ namespace EasyRepository.Sample.Controllers
         public async Task<IActionResult> FilterAuthorAsync([FromQuery]string name)
         {
             var queryable = _unitOfWork.Repository.GetQueryable<Author>();
-            var spec = new AuthorByNameSpec(name);
+            //var spec = new AuthorByNameSpec(name);
+            var spec = new AuthorOrderByNameSpec(name);
             var data = SpecificationConverter.Convert(queryable, spec);
             return Ok(data.ToList());
         }
