@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace EasyRepository.Sample.Entities
@@ -12,6 +13,7 @@ namespace EasyRepository.Sample.Entities
 
         public string Surname { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Book> Books { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <Import Project="..\..\common.props"/>
     <PropertyGroup>
@@ -6,12 +6,12 @@
         <PackageIconUrl/>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\EasyRepository.EFCore.Abstractions\EasyRepository.EFCore.Abstractions.csproj"/>
-    </ItemGroup>
-    <ItemGroup>
         <None Include="folders.png">
             <Pack>True</Pack>
             <PackagePath></PackagePath>
         </None>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="6.1.0"/>
     </ItemGroup>
 </Project>

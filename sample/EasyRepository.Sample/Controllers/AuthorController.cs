@@ -8,7 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EasyRepository.EFCore.Ardalis.Specification;
 using EasyRepository.EFCore.Generic;
+using EasyRepository.Sample.Specs;
 
 namespace EasyRepository.Sample.Controllers
 {
@@ -23,6 +25,16 @@ namespace EasyRepository.Sample.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [HttpGet(Name = "FilterAuthor")]
+        public async Task<IActionResult> FilterAuthorAsync([FromQuery]string name)
+        {
+            var queryable = _unitOfWork.Repository.GetQueryable<Author>();
+            //var spec = new AuthorByNameSpec(name);
+            var spec = new AuthorOrderByNameSpec(name);
+            var data = SpecificationConverter.Convert(queryable, spec);
+            return Ok(data.ToList());
+        }
+        
         [HttpPost]
         public async Task<IActionResult> AddAuthorAsync([FromBody] AuthorRequestDto dto)
         {
@@ -36,7 +48,7 @@ namespace EasyRepository.Sample.Controllers
              {
                  Title = "Book 123",
                  TotalPage = 124,
-                 AuthorId = Guid.NewGuid()
+                 AuthorId = entity.Id
              });
              
             await _unitOfWork.Repository.CompleteAsync();

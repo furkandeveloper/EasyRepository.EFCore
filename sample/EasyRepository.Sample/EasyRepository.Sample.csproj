@@ -18,6 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\src\EasyRepository.EFCore.Ardalis.Specification\EasyRepository.EFCore.Ardalis.Specification.csproj" />
 		<ProjectReference Include="..\..\src\EasyRepository.EFCore.Generic\EasyRepository.EFCore.Generic.csproj" />
 	</ItemGroup>
 
