@@ -24,7 +24,7 @@ public static class SpecificationConverter
     /// <returns>
     /// <see cref="IQueryable{TEntity}"/>
     /// </returns>
-    public static IQueryable<TEntity> Convert<TEntity>(IQueryable<TEntity> entity, ISpecification<TEntity> specification) where TEntity : class, new()
+    public static IQueryable<TEntity> Convert<TEntity>(IQueryable<TEntity> entity, ISpecification<TEntity> specification) where TEntity : class
     {
         return SpecificationEvaluator.Default.GetQuery(entity, specification);
     }

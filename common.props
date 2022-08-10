@@ -4,7 +4,7 @@
 		<RepositoryType>Git</RepositoryType>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<TargetFrameworks>net5.0</TargetFrameworks>
-		<Version>1.3.0</Version>
+		<Version>1.4.0</Version>
 		<LangVersion>latest</LangVersion>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<RepositoryUrl>https://github.com/furkandeveloper/EasyRepository.EFCore</RepositoryUrl>
