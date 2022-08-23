@@ -363,3 +363,8 @@ MigrationBackup/
 FodyWeavers.xsd
 
 appsettings.*.json
+/.idea/.idea.EasyRepository.EFCore/.idea/.gitignore
+/.idea/.idea.EasyRepository.EFCore/.idea/encodings.xml
+/.idea/.idea.EasyRepository.EFCore/.idea/indexLayout.xml
+/.idea/.idea.EasyRepository.EFCore/.idea/vcs.xml
+/.idea/.idea.EasyRepository.EFCore/.idea/aws.xml
