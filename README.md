@@ -28,3 +28,8 @@ The generic repository pattern implements in a separate class library project. .
 
 ### Documentation
 Visit [Wiki](https://github.com/furkandeveloper/EasyRepository.EFCore/wiki) page for documentation.
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=furkandeveloper/EasyRepository.EFCore&type=Date)](https://star-history.com/#furkandeveloper/EasyRepository.EFCore&Date)
+
