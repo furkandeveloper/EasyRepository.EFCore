@@ -1,19 +1,14 @@
-﻿using EasyRepository.EFCore.Abstractions;
+﻿namespace EasyRepository.Sample.Entities;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using EFCore.Abstractions;
 
-namespace EasyRepository.Sample.Entities
+public class Book : EasyBaseEntity<Guid>
 {
-    public class Book : EasyBaseEntity<Guid>
-    {
-        public string Title { get; set; }
+    public Guid AuthorId { get; set; }
+    public string Title { get; set; }
 
-        public Guid AuthorId { get; set; }
+    public int TotalPage { get; set; }
 
-        public int TotalPage { get; set; }
-
-        public virtual Author Author { get; set; }
-    }
+    public virtual Author Author { get; set; }
 }

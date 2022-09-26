@@ -1,20 +1,19 @@
-﻿using System;
+﻿namespace EasyRepository.EFCore.Abstractions;
 
-namespace EasyRepository.EFCore.Abstractions
+using System;
+
+/// <summary>
+///     This interface implemented Deletion Date and Is Deleted property for entity
+/// </summary>
+public interface IEasySoftDeleteEntity
 {
     /// <summary>
-    /// This interface implemented Deletion Date and Is Deleted property for entity
+    ///     Deletion Date
     /// </summary>
-    public interface IEasySoftDeleteEntity
-    {
-        /// <summary>
-        /// Deletion Date
-        /// </summary>
-        public DateTime? DeletionDate { get; set; }
+    public DateTime? DeletionDate { get; set; }
 
-        /// <summary>
-        /// Is Deleted
-        /// </summary>
-        public bool IsDeleted { get; set; }
-    }
+    /// <summary>
+    ///     Is Deleted
+    /// </summary>
+    public bool IsDeleted { get; set; }
 }
