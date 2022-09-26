@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFilterer.Types;
+using Enums;
 using Microsoft.EntityFrameworkCore.Query;
 
 /// <summary>
@@ -146,14 +147,14 @@ public interface IRepository
     /// <typeparam name="TPrimaryKey">
     ///     Type of primary key
     /// </typeparam>
-    /// <param name="entites">
+    /// <param name="entities">
     ///     The entities to be added
     /// </param>
     /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
     /// <returns>
     ///     Returns <see cref="Task{IEnumerable{TEntity}}" />
     /// </returns>
-    Task<IEnumerable<TEntity>> AddRangeAsync<TEntity, TPrimaryKey>(IEnumerable<TEntity> entites, CancellationToken cancellationToken = default)
+    Task<IEnumerable<TEntity>> AddRangeAsync<TEntity, TPrimaryKey>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         where TEntity : EasyBaseEntity<TPrimaryKey>;
 
 
@@ -248,7 +249,7 @@ public interface IRepository
     /// <returns>
     ///     Returns <see cref="int" />
     /// </returns>
-    Task<int> Count<TEntity>(Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default)
+    Task<int> CountAsync<TEntity>(Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
 
 
@@ -331,7 +332,55 @@ public interface IRepository
     /// </returns>
     TEntity GetById<TEntity>(bool asNoTracking, object id)
         where TEntity : class;
+    
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking and <see cref="object" /> id. This method provides get entity by
+    ///     id. In additional returns <see cref="{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="id">
+    ///     PK of entity
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="{TEntity}" />
+    /// </returns>
+    TEntity GetById<TEntity>(EfTrackingOptions asNoTracking, object id)
+        where TEntity : class;
 
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id and
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression. This method performs get entity by id
+    ///     with includable entities. In additional this method returns <see>
+    ///         <cref>{TEntity}</cref>
+    ///     </see>
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by the EF Core? Default value : false <see cref="bool" />
+    /// </param>
+    /// <param name="id">
+    ///     PK of entity
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see>
+    ///         <cref>{TEntity}</cref>
+    ///     </see>
+    /// </returns>
+    TEntity GetById<TEntity>(bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class;
+    
+    
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id and
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression. This method performs get entity by id
@@ -340,8 +389,8 @@ public interface IRepository
     /// <typeparam name="TEntity">
     ///     Type of entity
     /// </typeparam>
-    /// <param name="asnoTracking">
-    ///     Do you want the entity to be tracked by the EF Core? Default value : false <see cref="bool" />
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by the EF Core?   <see cref="EfTrackingOptions" />
     /// </param>
     /// <param name="id">
     ///     PK of entity
@@ -352,12 +401,12 @@ public interface IRepository
     /// <returns>
     ///     Returns <see cref="{TEntity}" />
     /// </returns>
-    TEntity GetById<TEntity>(bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+    TEntity GetById<TEntity>(EfTrackingOptions asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class;
 
 
     /// <summary>
-    ///     This method takes <see cref="bool" /> asnoTracking, <see cref="object" /> id and <see cref="Expression{Func}" />
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id and <see cref="Expression{Func}" />
     ///     project expression. This method performs get projected object by id with includable entities. In additional this
     ///     method returns <see cref="{TProjected}" />
     /// </summary>
@@ -381,10 +430,37 @@ public interface IRepository
     /// </returns>
     TProjected GetById<TEntity, TProjected>(bool asNoTracking, object id, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class;
+    
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id and <see cref="Expression{Func}" />
+    ///     project expression. This method performs get projected object by id with includable entities. In additional this
+    ///     method returns <see cref="{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object <see cref="{TProjected}" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by the EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="id">
+    ///     PK of entity
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Project expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="{TProjected}" />
+    /// </returns>
+    TProjected GetById<TEntity, TProjected>(EfTrackingOptions asNoTracking, object id, Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class;
 
 
     /// <summary>
-    ///     This method takes <see cref="bool" /> asnoTracking, <see cref="object" /> id,
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id,
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> and <see cref="Expression{Func}" /> project expression.
     ///     This method performs get projected object by id with includable entities. In additional this method returns
     ///     <see cref="{TProjected}" />
@@ -414,6 +490,39 @@ public interface IRepository
         bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class;
+    
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id,
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> and <see cref="Expression{Func}" /> project expression.
+    ///     This method performs get projected object by id with includable entities. In additional this method returns
+    ///     <see cref="{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object <see cref="{TProjected}" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by the EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="id">
+    ///     PK of entity
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Project expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="{TProjected}" />
+    /// </returns>
+    TProjected GetById<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class;
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id. This method provides get entity by id
@@ -434,6 +543,27 @@ public interface IRepository
     /// </returns>
     Task<TEntity> GetByIdAsync<TEntity>(bool asNoTracking, object id, CancellationToken cancellationToken = default)
         where TEntity : class;
+    
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id. This method provides get entity by id
+    ///     async version. In additional returns <see cref="{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="id">
+    ///     PK of entity
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="{TEntity}" />
+    /// </returns>
+    Task<TEntity> GetByIdAsync<TEntity>(EfTrackingOptions asNoTracking, object id, CancellationToken cancellationToken = default)
+        where TEntity : class;
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id,
@@ -445,7 +575,7 @@ public interface IRepository
     ///     Type of entity
     /// </typeparam>
     /// <param name="asNoTracking">
-    ///     Do you want the entity to be tracked by the EF Core? Default value : false <see cref="bool" />
+    ///     Do you want the entity to be tracked by the EF Core?   <see cref="EfTrackingOptions" />
     /// </param>
     /// <param name="id">
     ///     PK of entity
@@ -461,9 +591,38 @@ public interface IRepository
         bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class;
+    
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id,
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression and <see cref="CancellationToken" />
+    ///     cancellation token. This method performs get entity by id with includable entities. In additional this method
+    ///     returns <see cref="{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by the EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="id">
+    ///     PK of entity
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="{TEntity}" />
+    /// </returns>
+    Task<TEntity> GetByIdAsync<TEntity>(
+        EfTrackingOptions asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class;
+
 
     /// <summary>
-    ///     This method takes <see cref="bool" /> asnoTracking, <see cref="object" /> id and <see cref="Expression{Func}" />
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id and <see cref="Expression{Func}" />
     ///     project expression. This method performs get projected object by id with includable entities async version. In
     ///     additional this method returns <see cref="{TProjected}" />
     /// </summary>
@@ -490,9 +649,39 @@ public interface IRepository
         bool asNoTracking, object id, Expression<Func<TEntity, TProjected>> projectExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class;
+    
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id and <see cref="Expression{Func}" />
+    ///     project expression. This method performs get projected object by id with includable entities async version. In
+    ///     additional this method returns <see cref="{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object <see cref="{TProjected}" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by the EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="id">
+    ///     PK of entity
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Project expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="{TProjected}" />
+    /// </returns>
+    Task<TProjected> GetByIdAsync<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, object id, Expression<Func<TEntity, TProjected>> projectExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class;
 
     /// <summary>
-    ///     This method takes <see cref="bool" /> asnoTracking, <see cref="object" /> id,
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id,
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> and <see cref="Expression{Func}" /> project expression.
     ///     This method performs get projected object by id with includable entities async version. In additional this method
     ///     returns <see cref="{TProjected}" />
@@ -523,6 +712,39 @@ public interface IRepository
         bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id,
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> and <see cref="Expression{Func}" /> project expression.
+    ///     This method performs get projected object by id with includable entities async version. In additional this method
+    ///     returns <see cref="{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object <see cref="{TProjected}" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by the EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="id">
+    ///     PK of entity
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Project expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="{TProjected}" />
+    /// </returns>
+    Task<TProjected> GetByIdAsync<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
+        where TEntity : class;
 
     /// <summary>
     ///     This method  returns List of Entity without filter. <see cref="List{TEntity}" />
@@ -537,6 +759,21 @@ public interface IRepository
     ///     Returns <see cref="List{TEntity}" />
     /// </returns>
     List<TEntity> GetMultiple<TEntity>(bool asNoTracking)
+        where TEntity : class;
+    
+    /// <summary>
+    ///     This method  returns List of Entity without filter. <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="List{TEntity}" />
+    /// </returns>
+    List<TEntity> GetMultiple<TEntity>(EfTrackingOptions asNoTracking)
         where TEntity : class;
 
     /// <summary>
@@ -560,6 +797,29 @@ public interface IRepository
     /// </returns>
     List<TProjected> GetMultiple<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class;
+    
+    /// <summary>
+    ///     This method provides without filter get all entity but you can convert it to any object you want.
+    ///     In additional this method takes <see cref="Expression{Func}" /> returns <see cref="List{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object
+    /// </typeparam>
+    /// <param name="projectExpression">
+    ///     Select expression
+    /// </param>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?   <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="List{TProjected}" />
+    /// </returns>
+    List<TProjected> GetMultiple<TEntity, TProjected>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class;
+
 
     /// <summary>
     ///     This method takes <see cref="Expression{Func}" /> performs apply filter get all entity. In additional returns
@@ -578,6 +838,25 @@ public interface IRepository
     ///     Returns <see cref="List{TEntity}" />
     /// </returns>
     List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression)
+        where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="Expression{Func}" /> performs apply filter get all entity. In additional returns
+    ///     <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <param name="whereExpression">
+    ///     Where expression see <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="List{TEntity}" />
+    /// </returns>
+    List<TEntity> GetMultiple<TEntity>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression)
         where TEntity : class;
 
     /// <summary>
@@ -605,6 +884,33 @@ public interface IRepository
     /// </returns>
     List<TProjected> GetMultiple<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="Expression{Func}" /> where expression and <see cref="Expression{Func}" /> select
+    ///     expression. This method performs apply filter and convert returns get all entity. In additional returns
+    ///     <see cref="List{TPrtojected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of Projected object
+    /// </typeparam>
+    /// <param name="whereExpression">
+    ///     Where Expression
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Select expression
+    /// </param>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="List{TProjected}" />
+    /// </returns>
+    List<TProjected> GetMultiple<TEntity, TProjected>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class;
+
 
     /// <summary>
     ///     This method takes <see cref="bool" /> and <see cref="IIncludableQueryable{TEntity, TProperty}" />. This method
@@ -623,6 +929,25 @@ public interface IRepository
     ///     Returns <see cref="List{TEntity}" />
     /// </returns>
     List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> and <see cref="IIncludableQueryable{TEntity, TProperty}" />. This method
+    ///     performs get all with includable entities. In additional this method returns <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?   <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> expression
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="List{TEntity}" />
+    /// </returns>
+    List<TEntity> GetMultiple<TEntity>(EfTrackingOptions asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class;
 
     /// <summary>
@@ -647,6 +972,30 @@ public interface IRepository
     /// </returns>
     List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" />, <see cref="Expression{Func}" /> and
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" />. This method perform get all entities with filter and
+    ///     includable entities. In additional this method returns <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="whereExpression">
+    ///     Where Expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="List{TEntity}" />
+    /// </returns>
+    List<TEntity> GetMultiple<TEntity>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class;
+
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> where expression,
@@ -679,6 +1028,39 @@ public interface IRepository
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> where expression,
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression and <see cref="Expression{Func}" />
+    ///     select expression. This method perform get all projected object with filter and include entities. In additional
+    ///     returns <see cref="List{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="whereExpression">
+    ///     Where Expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Select expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="List{TProjected}" />
+    /// </returns>
+    List<TProjected> GetMultiple<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class;
+    
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> pagination filter object. This method
@@ -703,6 +1085,31 @@ public interface IRepository
     List<TEntity> GetMultiple<TEntity, TFilter>(bool asNoTracking, TFilter filter)
         where TEntity : class
         where TFilter : FilterBase;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> pagination filter object. This method
+    ///     performs generate LINQ expressions for Entities over DTOs automatically. In additional returns
+    ///     <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of filter object <see cref="FilterBase" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter dto <see cref="FilterBase" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="List{TEntity}" />
+    /// </returns>
+    List<TEntity> GetMultiple<TEntity, TFilter>(EfTrackingOptions asNoTracking, TFilter filter)
+        where TEntity : class
+        where TFilter : FilterBase;
+
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" />  pagination filter object and
@@ -730,6 +1137,34 @@ public interface IRepository
     List<TEntity> GetMultiple<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class
         where TFilter : FilterBase;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" />  pagination filter object and
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression. This method performs get all entities
+    ///     with apply filter and includable entities. In additional returns <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of filter Object <see cref="FilterBase" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?   <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter dto <see cref="FilterBase" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="List{TEntity}" />
+    /// </returns>
+    List<TEntity> GetMultiple<TEntity, TFilter>(EfTrackingOptions asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class
+        where TFilter : FilterBase;
+
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> paginationable filter object and
@@ -760,6 +1195,37 @@ public interface IRepository
     List<TProjected> GetMultiple<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class
         where TFilter : FilterBase;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> paginationable filter object and
+    ///     <see cref="Expression{Func}" /> project expression. This method performs get all projected objects with apply
+    ///     filter. In additional returns <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of filter Object <see cref="FilterBase" />
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object <see cref="{TProjected}" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter dto <see cref="FilterBase" />
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Project expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="List{TProjected}" />
+    /// </returns>
+    List<TProjected> GetMultiple<TEntity, TFilter, TProjected>(EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class
+        where TFilter : FilterBase;
+
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> paginationable filter object,
@@ -796,6 +1262,42 @@ public interface IRepository
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class
         where TFilter : FilterBase;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> paginationable filter object,
+    ///     <see cref="Expression{Func}" /> project expression and <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    ///     include expression. This method performs get all projected objects with apply filter and get all includable
+    ///     entities. In additional this method returns <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of filter <see cref="FilterBase" />
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter dto <see cref="FilterBase" />
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Project expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="List{TEntity}" />
+    /// </returns>
+    List<TProjected> GetMultiple<TEntity, TFilter, TProjected>(
+        EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class
+        where TFilter : FilterBase;
 
     /// <summary>
     ///     This method  returns List of Entity without filter async version. <see cref="List{TEntity}" />
@@ -811,6 +1313,22 @@ public interface IRepository
     ///     Returns <see cref="List{TEntity}" />
     /// </returns>
     Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, CancellationToken cancellationToken = default)
+        where TEntity : class;
+    
+    /// <summary>
+    ///     This method  returns List of Entity without filter async version. <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="List{TEntity}" />
+    /// </returns>
+    Task<List<TEntity>> GetMultipleAsync<TEntity>(EfTrackingOptions asNoTracking, CancellationToken cancellationToken = default)
         where TEntity : class;
 
     /// <summary>
@@ -835,6 +1353,30 @@ public interface IRepository
     /// </returns>
     Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="Expression{Func}" /> and <see cref="CancellationToken" />. This method performs
+    ///     without filter get all entity but you can convert it to any object you want
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object
+    /// </typeparam>
+    /// <param name="projectExpression">
+    ///     Select expression
+    /// </param>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="List{TProjected}" />
+    /// </returns>
+    Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
+        where TEntity : class;
+
 
     /// <summary>
     ///     This method takes <see cref="Expression{Func}" /> and <see cref="CancellationToken" />. This method performs apply
@@ -855,6 +1397,27 @@ public interface IRepository
     /// </returns>
     Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="Expression{Func}" /> and <see cref="CancellationToken" />. This method performs apply
+    ///     filter get all entity. In additional returns <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <param name="whereExpression">
+    ///     Where Expression
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="List{TEntity}" />
+    /// </returns>
+    Task<List<TEntity>> GetMultipleAsync<TEntity>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default)
+        where TEntity : class;
+
 
     /// <summary>
     ///     This method takes <see cref="Expression{Func}" /> where expression and <see cref="Expression{Func}" /> select
@@ -876,11 +1439,41 @@ public interface IRepository
     /// <param name="asNoTracking">
     ///     Do you want the entity to be tracked by EF Core? Default value : false <see cref="bool" />
     /// </param>
+    /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>
     ///     Returns <see cref="List{TProjected}" />
     /// </returns>
     Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class;
+
+    /// <summary>
+    ///     This method takes <see cref="Expression{Func}" /> where expression and <see cref="Expression{Func}" /> select
+    ///     expression. This method performs apply filter async version and convert returns get all entity. In additional
+    ///     returns <see cref="List{TPrtojected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of Projected object
+    /// </typeparam>
+    /// <param name="whereExpression">
+    ///     Where Expression
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Select expression
+    /// </param>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="cancellationToken">The cancellation token</param>
+    /// <returns>
+    ///     Returns <see cref="List{TProjected}" />
+    /// </returns>
+    Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class;
 
@@ -904,6 +1497,28 @@ public interface IRepository
     /// </returns>
     Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> and <see cref="IIncludableQueryable{TEntity, TProperty}" />. This method
+    ///     performs get all with includable entities async version. In additional this method returns
+    ///     <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?   <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> expression
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="List{TEntity}" />
+    /// </returns>
+    Task<List<TEntity>> GetMultipleAsync<TEntity>(EfTrackingOptions asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+        where TEntity : class;
+
 
     /// <summary>
     ///     This method takes <see cref="bool" />, <see cref="Expression{Func}" />,
@@ -931,6 +1546,34 @@ public interface IRepository
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" />, <see cref="Expression{Func}" />,
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> and <see cref="CancellationToken" />. This method perform
+    ///     get all entities with filter and includable entities async version. In additional this method returns
+    ///     <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="whereExpression">
+    ///     Where Expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="List{TEntity}" />
+    /// </returns>
+    Task<List<TEntity>> GetMultipleAsync<TEntity>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class;
+
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> where expression,
@@ -964,6 +1607,40 @@ public interface IRepository
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
+    
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> where expression,
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression, <see cref="Expression{Func}" /> select
+    ///     expression and <see cref="CancellationToken" /> cancellation token. This method perform get all projected object
+    ///     with filter and include entities async version. In additional returns <see cref="List{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="whereExpression">
+    ///     Where Expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Select expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="List{TProjected}" />
+    /// </returns>
+    Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
+        where TEntity : class;
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> pagination filter object and
@@ -987,6 +1664,31 @@ public interface IRepository
     ///     Returns <see cref="List{TEntity}" />
     /// </returns>
     Task<List<TEntity>> GetMultipleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> pagination filter object and
+    ///     <see cref="CancellationToken" />. This method performs generate LINQ expressions for Entities over DTOs
+    ///     automatically async version. In additional returns <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of filter object <see cref="FilterBase" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter dto <see cref="FilterBase" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="List{TEntity}" />
+    /// </returns>
+    Task<List<TEntity>> GetMultipleAsync<TEntity, TFilter>(EfTrackingOptions asNoTracking, TFilter filter, CancellationToken cancellationToken = default)
         where TEntity : class
         where TFilter : FilterBase;
 
@@ -1020,6 +1722,37 @@ public interface IRepository
         CancellationToken cancellationToken = default)
         where TEntity : class
         where TFilter : FilterBase;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> paginationable filter object,
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> and <see cref="CancellationToken" /> cancellation token.
+    ///     This method performs get all entities with apply filter and get all includable entities async version. In
+    ///     additional this method returns <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of filter object <see cref="FilterBase" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter dto <see cref="FilterBase" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="List{TEntity}" />
+    /// </returns>
+    Task<List<TEntity>> GetMultipleAsync<TEntity, TFilter>(
+        EfTrackingOptions asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase;
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> paginationable filter object and
@@ -1050,6 +1783,39 @@ public interface IRepository
     /// </returns>
     Task<List<TProjected>> GetMultipleAsync<TEntity, TFilter, TProjected>(
         bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> paginationable filter object and
+    ///     <see cref="Expression{Func}" /> project expression. This method performs get all projected objects with apply
+    ///     filter async version. In additional returns <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of filter Object <see cref="FilterBase" />
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object <see cref="{TProjected}" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter dto <see cref="FilterBase" />
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Project expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="List{TProjected}" />
+    /// </returns>
+    Task<List<TProjected>> GetMultipleAsync<TEntity, TFilter, TProjected>(
+        EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class
         where TFilter : FilterBase;
@@ -1087,6 +1853,44 @@ public interface IRepository
     /// </returns>
     Task<List<TProjected>> GetMultipleAsync<TEntity, TFilter, TProjected>(
         bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase;
+
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> paginationable filter object,
+    ///     <see cref="Expression{Func}" /> project expression and <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    ///     include expression. This method performs get all projected objects with apply filter and get all includable
+    ///     entities async version. In additional this method returns <see cref="List{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of filter <see cref="FilterBase" />
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter dto <see cref="FilterBase" />
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Project expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="List{TEntity}" />
+    /// </returns>
+    Task<List<TProjected>> GetMultipleAsync<TEntity, TFilter, TProjected>(
+        EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
         where TEntity : class
         where TFilter : FilterBase;
@@ -1139,6 +1943,25 @@ public interface IRepository
     /// </returns>
     TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression)
         where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking and <see cref="Expression{Func}" /> where expression. This
+    ///     method performs get entity with apply filter. In additional returns <see cref="{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="whereExpression">
+    ///     Where expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="{TEntity}" />
+    /// </returns>
+    TEntity GetSingle<TEntity>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression)
+        where TEntity : class;
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> and
@@ -1161,6 +1984,29 @@ public interface IRepository
     ///     Returns <see cref="{TEntity}" />
     /// </returns>
     TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> and
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression. This method performs get entity with
+    ///     apply filter and includable entities. In additional this method returns <see cref="{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?   <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="whereExpression">
+    ///     Where expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="{TEntity}" />
+    /// </returns>
+    TEntity GetSingle<TEntity>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class;
 
     /// <summary>
@@ -1187,6 +2033,32 @@ public interface IRepository
     ///     Returns <see cref="{TProjected}" />
     /// </returns>
     TProjected GetSingle<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> where expression and
+    ///     <see cref="Expression{Func}" /> project the expression. This method performs get projected object with apply
+    ///     filter. In additional returns <see cref="{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="whereExpression">
+    ///     Where expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Project expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="{TProjected}" />
+    /// </returns>
+    TProjected GetSingle<TEntity, TProjected>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class;
 
     /// <summary>
@@ -1220,6 +2092,38 @@ public interface IRepository
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> where expression,
+    ///     <see cref="Expression{Func}" /> project expression and <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    ///     include expression. This method performs get projected object with apply filter and includable entity. In
+    ///     additional returns <see cref="{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object <see cref="{TProjected}" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="whereExpression">
+    ///     Where expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Project expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="{TProjected}" />
+    /// </returns>
+    TProjected GetSingle<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class;
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking and <see cref="{TFilter}" /> filter object. This object must be
@@ -1242,6 +2146,30 @@ public interface IRepository
     ///     Returns <see cref="{TEntity}" />
     /// </returns>
     TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter)
+        where TEntity : class
+        where TFilter : FilterBase;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking and <see cref="{TFilter}" /> filter object. This object must be
+    ///     type <see cref="FilterBase" />. This method perform get entity with filter. In additional returns
+    ///     <see cref="{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of Filter <see cref="FilterBase" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter object of type FilterBase <see cref="FilterBase" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="{TEntity}" />
+    /// </returns>
+    TEntity GetSingle<TEntity, TFilter>(EfTrackingOptions asNoTracking, TFilter filter)
         where TEntity : class
         where TFilter : FilterBase;
 
@@ -1271,6 +2199,34 @@ public interface IRepository
     TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class
         where TFilter : FilterBase;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="IIncludableQueryable{TEntity, TProperty}" /> include
+    ///     expression and <see cref="{TFilter}" /> filterable object <see cref="FilterBase" />. This method performs get and
+    ///     includable entity with filter. In additional returns <see cref="{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of Filter <see cref="FilterBase" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?   <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter object of type FilterBase <see cref="FilterBase" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="{TEntity}" />
+    /// </returns>
+    TEntity GetSingle<TEntity, TFilter>(EfTrackingOptions asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class
+        where TFilter : FilterBase;
+
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> select expression and
@@ -1283,6 +2239,8 @@ public interface IRepository
     /// <typeparam name="TFilter">
     ///     Type of Filter <see cref="FilterBase" />
     /// </typeparam>
+    /// <typeparam name="TProjected">The projection to return</typeparam>
+
     /// <param name="asNoTracking">
     ///     Do you want the entity to be tracked by EF Core? Default value : false <see cref="bool" />
     /// </param>
@@ -1293,6 +2251,31 @@ public interface IRepository
     ///     Returns <see cref="{TProjected}" />
     /// </returns>
     TProjected GetSingle<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class
+        where TFilter : FilterBase;
+
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> select expression and
+    ///     <see cref="{TFilter}" /> filterable object <see cref="FilterBase" />. This method performs get projected object
+    ///     with filter. In additional returns <see cref="{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of Filter <see cref="FilterBase" />
+    /// </typeparam>
+    /// <typeparam name="TProjected">The projection to return</typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?   <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter object of type FilterBase <see cref="FilterBase" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="{TProjected}" />
+    /// </returns>
+    TProjected GetSingle<TEntity, TProjected, TFilter>(EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class
         where TFilter : FilterBase;
 
@@ -1308,6 +2291,7 @@ public interface IRepository
     /// <typeparam name="TFilter">
     ///     Type of Filter <see cref="FilterBase" />
     /// </typeparam>
+    /// <typeparam name="TProjected">The projection to return</typeparam>
     /// <param name="asNoTracking">
     ///     Do you want the entity to be tracked by EF Core? Default value : false <see cref="bool" />
     /// </param>
@@ -1325,6 +2309,38 @@ public interface IRepository
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class
         where TFilter : FilterBase;
+
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> select expression,
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression and <see cref="{TFilter}" /> filterable
+    ///     object <see cref="FilterBase" />. This method performs get projected object with filter. In additional returns
+    ///     <see cref="{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of Filter <see cref="FilterBase" />
+    /// </typeparam>
+    /// <typeparam name="TProjected">The projection to return</typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter object of type FilterBase <see cref="FilterBase" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <returns>
+    ///     Returns <see cref="{TProjected}" />
+    /// </returns>
+    TProjected GetSingle<TEntity, TProjected, TFilter>(
+        EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class
+        where TFilter : FilterBase;
+
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking and <see cref="Expression{Func}" /> where expression. This
@@ -1346,6 +2362,26 @@ public interface IRepository
     Task<TEntity> GetSingleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
 
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking and <see cref="Expression{Func}" /> where expression. This
+    ///     method performs get entity with apply filter async version. In additional returns <see cref="{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="whereExpression">
+    ///     Where expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="{TEntity}" />
+    /// </returns>
+    Task<TEntity> GetSingleAsync<TEntity>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default)
+        where TEntity : class;
+    
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> and
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression. This method performs get entity with
@@ -1369,6 +2405,32 @@ public interface IRepository
     /// </returns>
     Task<TEntity> GetSingleAsync<TEntity>(
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> and
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression. This method performs get entity with
+    ///     apply filter and includable entities async version. In additional this method returns <see cref="{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="whereExpression">
+    ///     Where expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="{TEntity}" />
+    /// </returns>
+    Task<TEntity> GetSingleAsync<TEntity>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class;
 
@@ -1401,6 +2463,37 @@ public interface IRepository
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> where expression,
+    ///     <see cref="Expression{Func}" /> project the expression and <see cref="CancellationToken" /> cancellation token.
+    ///     This method performs get projected object with apply filter async version. In additional returns
+    ///     <see cref="{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="whereExpression">
+    ///     Where expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Project expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="{TProjected}" />
+    /// </returns>
+    Task<TProjected> GetSingleAsync<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class;
+
 
 
     /// <summary>
@@ -1435,6 +2528,39 @@ public interface IRepository
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> where expression,
+    ///     <see cref="Expression{Func}" /> project expression, <see cref="IIncludableQueryable{TEntity, TProperty}" /> include
+    ///     expression and <see cref="CancellationToken" /> cancellation token. This method performs get projected object with
+    ///     apply filter and includable entity async version. In additional returns <see cref="{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of entity
+    /// </typeparam>
+    /// <typeparam name="TProjected">
+    ///     Type of projected object <see cref="{TProjected}" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="whereExpression">
+    ///     Where expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="projectExpression">
+    ///     Project expression <see cref="Expression{Func}" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="{TProjected}" />
+    /// </returns>
+    Task<TProjected> GetSingleAsync<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+        where TEntity : class;
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="CancellationToken" /> cancellation token and
@@ -1460,6 +2586,32 @@ public interface IRepository
     Task<TEntity> GetSingleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, CancellationToken cancellationToken = default)
         where TEntity : class
         where TFilter : FilterBase;
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="CancellationToken" /> cancellation token and
+    ///     <see cref="{TFilter}" /> filter object. This object must be type <see cref="FilterBase" />. This method perform get
+    ///     entity with filter async version. In additional returns <see cref="{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of Filter <see cref="FilterBase" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter object of type FilterBase <see cref="FilterBase" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="{TEntity}" />
+    /// </returns>
+    Task<TEntity> GetSingleAsync<TEntity, TFilter>(EfTrackingOptions asNoTracking, TFilter filter, CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase;
+
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="IIncludableQueryable{TEntity, TProperty}" /> include
@@ -1491,6 +2643,38 @@ public interface IRepository
         CancellationToken cancellationToken = default)
         where TEntity : class
         where TFilter : FilterBase;
+    
+    
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="IIncludableQueryable{TEntity, TProperty}" /> include
+    ///     expression, <see cref="CancellationToken" /> cancellation token and <see cref="{TFilter}" /> filterable object
+    ///     <see cref="FilterBase" />. This method performs get and includable entity with filter. In additional returns
+    ///     <see cref="{TEntity}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of Filter <see cref="FilterBase" />
+    /// </typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core?  <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter object of type FilterBase <see cref="FilterBase" />
+    /// </param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="{TEntity}" />
+    /// </returns>
+    Task<TEntity> GetSingleAsync<TEntity, TFilter>(
+        EfTrackingOptions asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase;
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> select expression,
@@ -1504,6 +2688,7 @@ public interface IRepository
     /// <typeparam name="TFilter">
     ///     Type of Filter <see cref="FilterBase" />
     /// </typeparam>
+    /// <typeparam name="TProjected">The projected type to return</typeparam>
     /// <param name="asNoTracking">
     ///     Do you want the entity to be tracked by EF Core? Default value : false <see cref="bool" />
     /// </param>
@@ -1522,6 +2707,36 @@ public interface IRepository
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> select expression,
+    ///     <see cref="CancellationToken" /> cancellation token and <see cref="{TFilter}" /> filterable object
+    ///     <see cref="FilterBase" />. This method performs get projected object with filter. In additional returns
+    ///     <see cref="{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of Filter <see cref="FilterBase" />
+    /// </typeparam>
+    /// <typeparam name="TProjected">The projected type to return</typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter object of type FilterBase <see cref="FilterBase" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="{TProjected}" />
+    /// </returns>
+    Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(
+        EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase;
+
+
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> select expression,
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression, <see cref="CancellationToken" />
     ///     cancellation token and <see cref="{TFilter}" /> filterable object <see cref="FilterBase" />. This method performs
     ///     get projected object with filter. In additional returns <see cref="{TProjected}" />
@@ -1532,12 +2747,14 @@ public interface IRepository
     /// <typeparam name="TFilter">
     ///     Type of Filter <see cref="FilterBase" />
     /// </typeparam>
+    /// <typeparam name="TProjected">The projected type to return</typeparam>
     /// <param name="asNoTracking">
     ///     Do you want the entity to be tracked by EF Core? Default value : false <see cref="bool" />
     /// </param>
     /// <param name="filter">
     ///     Filter object of type FilterBase <see cref="FilterBase" />
     /// </param>
+    /// <param name="projectExpression">The expression to create the projection object</param>
     /// <param name="includeExpression">
     ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
     /// </param>
@@ -1547,6 +2764,39 @@ public interface IRepository
     /// </returns>
     Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(
         bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase;
+
+    /// <summary>
+    ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> select expression,
+    ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression, <see cref="CancellationToken" />
+    ///     cancellation token and <see cref="{TFilter}" /> filterable object <see cref="FilterBase" />. This method performs
+    ///     get projected object with filter. In additional returns <see cref="{TProjected}" />
+    /// </summary>
+    /// <typeparam name="TEntity">
+    ///     Type of Entity
+    /// </typeparam>
+    /// <typeparam name="TFilter">
+    ///     Type of Filter <see cref="FilterBase" />
+    /// </typeparam>
+    /// <typeparam name="TProjected">The projected type to return</typeparam>
+    /// <param name="asNoTracking">
+    ///     Do you want the entity to be tracked by EF Core? <see cref="EfTrackingOptions" />
+    /// </param>
+    /// <param name="filter">
+    ///     Filter object of type FilterBase <see cref="FilterBase" />
+    /// </param>
+    /// <param name="projectExpression">The expression to create the projection object</param>
+    /// <param name="includeExpression">
+    ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
+    /// </param>
+    /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     Returns <see cref="{TProjected}" />
+    /// </returns>
+    Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(
+        EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
         where TEntity : class
         where TFilter : FilterBase;
@@ -1613,6 +2863,7 @@ public interface IRepository
     /// <param name="entity">
     ///     The entity to be deleted
     /// </param>
+    /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>
     ///     Returns <see cref="Task" />
     /// </returns>
@@ -1688,7 +2939,7 @@ public interface IRepository
 
     /// <summary>
     ///     This method takes <see cref="{TEntity}" /> and <see cref="{TPrimaryKey}" />. This method performs replace operation
-    ///     for EasyBaseEntity. In additional this method returs <see cref="{TEntity}" />
+    ///     for EasyBaseEntity. In additional this method returns <see cref="{TEntity}" />
     /// </summary>
     /// <typeparam name="TEntity">
     ///     Type of Entity
@@ -1725,7 +2976,7 @@ public interface IRepository
 
     /// <summary>
     ///     This method takes <see cref="{TEntity}" /> and <see cref="{TPrimaryKey}" />. This method performs replace operation
-    ///     for EasyBaseEntity. In additional this method returs <see cref="Task{TEntity}" />
+    ///     for EasyBaseEntity. In additional this method returns <see cref="Task{TEntity}" />
     /// </summary>
     /// <typeparam name="TEntity">
     ///     Type of Entity
@@ -1736,6 +2987,7 @@ public interface IRepository
     /// <param name="entity">
     ///     The entity to be replaced
     /// </param>
+    /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>
     ///     Returns <see cref="Task{TEntity}" />
     /// </returns>
@@ -1755,6 +3007,7 @@ public interface IRepository
     /// <param name="id">
     ///     PK of Entity
     /// </param>
+    /// <param name="entity"></param>
     void SoftDelete<TEntity, TPrimaryKey>(TEntity entity)
         where TEntity : EasyBaseEntity<TPrimaryKey>;
 
@@ -1828,7 +3081,7 @@ public interface IRepository
 
     /// <summary>
     ///     This method takes <see cref="{TEntity}" /> and <see cref="{TPrimaryKey}" />. This method performs update operation
-    ///     for EasyBaseEntity. In additional this method returs <see cref="{TEntity}" />
+    ///     for EasyBaseEntity. In additional this method returns <see cref="{TEntity}" />
     /// </summary>
     /// <typeparam name="TEntity">
     ///     Type of Entity
@@ -1864,7 +3117,7 @@ public interface IRepository
 
     /// <summary>
     ///     This method takes <see cref="{TEntity}" /> and <see cref="{TPrimaryKey}" />. This method performs update operation
-    ///     for EasyBaseEntity. In additional this method returs <see cref="Task{TEntity}" />
+    ///     for EasyBaseEntity. In additional this method returns <see cref="Task{TEntity}" />
     /// </summary>
     /// <typeparam name="TEntity">
     ///     Type of Entity
@@ -1875,6 +3128,7 @@ public interface IRepository
     /// <param name="entity">
     ///     The entity to be updated
     /// </param>
+    /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>
     ///     Returns <see cref="Task{TEntity}" />
     /// </returns>
@@ -1896,7 +3150,7 @@ public interface IRepository
 
     /// <summary>
     ///     This method takes <see cref="IEnumerable{TEntity}" /> and <see cref="{TPrimaryKey}" />. This method performs update
-    ///     range operation for EasyBaseEntity. In additional this method returs <see cref="IEnumerable{TEntity}" />
+    ///     range operation for EasyBaseEntity. In additional this method returns <see cref="IEnumerable{TEntity}" />
     /// </summary>
     /// <typeparam name="TEntity">
     ///     Type of Entity
@@ -1932,7 +3186,7 @@ public interface IRepository
 
     /// <summary>
     ///     This method takes <see cref="IEnumerable{TEntity}" /> and <see cref="{TPrimaryKey}" />. This method performs update
-    ///     operation for EasyBaseEntity. In additional this method returs <see cref="Task{TResult}" />
+    ///     operation for EasyBaseEntity. In additional this method returns <see cref="Task{TResult}" />
     /// </summary>
     /// <typeparam name="TEntity">
     ///     Type of Entity
@@ -1941,8 +3195,9 @@ public interface IRepository
     ///     Type of Primary Key
     /// </typeparam>
     /// <param name="entities">
-    ///     The entites to be updated
+    ///     The entities to be updated
     /// </param>
+    /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>
     ///     Returns <see cref="Task{TResult}" />
     /// </returns>
