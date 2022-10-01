@@ -332,8 +332,8 @@ public interface IRepository
     /// </returns>
     TEntity GetById<TEntity>(bool asNoTracking, object id)
         where TEntity : class;
-    
-    
+
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking and <see cref="object" /> id. This method provides get entity by
     ///     id. In additional returns <see cref="{TEntity}" />
@@ -356,7 +356,8 @@ public interface IRepository
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id and
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression. This method performs get entity by id
-    ///     with includable entities. In additional this method returns <see>
+    ///     with includable entities. In additional this method returns
+    ///     <see>
     ///         <cref>{TEntity}</cref>
     ///     </see>
     /// </summary>
@@ -373,14 +374,15 @@ public interface IRepository
     ///     Include expression <see cref="IIncludableQueryable{TEntity, TProperty}" />
     /// </param>
     /// <returns>
-    ///     Returns <see>
+    ///     Returns
+    ///     <see>
     ///         <cref>{TEntity}</cref>
     ///     </see>
     /// </returns>
     TEntity GetById<TEntity>(bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class;
-    
-    
+
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id and
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression. This method performs get entity by id
@@ -430,8 +432,8 @@ public interface IRepository
     /// </returns>
     TProjected GetById<TEntity, TProjected>(bool asNoTracking, object id, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class;
-    
-    
+
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id and <see cref="Expression{Func}" />
     ///     project expression. This method performs get projected object by id with includable entities. In additional this
@@ -490,8 +492,8 @@ public interface IRepository
         bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class;
-    
-    
+
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id,
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> and <see cref="Expression{Func}" /> project expression.
@@ -543,8 +545,8 @@ public interface IRepository
     /// </returns>
     Task<TEntity> GetByIdAsync<TEntity>(bool asNoTracking, object id, CancellationToken cancellationToken = default)
         where TEntity : class;
-    
-    
+
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id. This method provides get entity by id
     ///     async version. In additional returns <see cref="{TEntity}" />
@@ -591,8 +593,8 @@ public interface IRepository
         bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class;
-    
-    
+
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id,
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression and <see cref="CancellationToken" />
@@ -649,8 +651,8 @@ public interface IRepository
         bool asNoTracking, object id, Expression<Func<TEntity, TProjected>> projectExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class;
-    
-    
+
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id and <see cref="Expression{Func}" />
     ///     project expression. This method performs get projected object by id with includable entities async version. In
@@ -712,7 +714,7 @@ public interface IRepository
         bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="object" /> id,
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> and <see cref="Expression{Func}" /> project expression.
@@ -760,7 +762,7 @@ public interface IRepository
     /// </returns>
     List<TEntity> GetMultiple<TEntity>(bool asNoTracking)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method  returns List of Entity without filter. <see cref="List{TEntity}" />
     /// </summary>
@@ -797,7 +799,7 @@ public interface IRepository
     /// </returns>
     List<TProjected> GetMultiple<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method provides without filter get all entity but you can convert it to any object you want.
     ///     In additional this method takes <see cref="Expression{Func}" /> returns <see cref="List{TProjected}" />
@@ -839,7 +841,7 @@ public interface IRepository
     /// </returns>
     List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="Expression{Func}" /> performs apply filter get all entity. In additional returns
     ///     <see cref="List{TEntity}" />
@@ -884,7 +886,7 @@ public interface IRepository
     /// </returns>
     List<TProjected> GetMultiple<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="Expression{Func}" /> where expression and <see cref="Expression{Func}" /> select
     ///     expression. This method performs apply filter and convert returns get all entity. In additional returns
@@ -930,7 +932,7 @@ public interface IRepository
     /// </returns>
     List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> and <see cref="IIncludableQueryable{TEntity, TProperty}" />. This method
     ///     performs get all with includable entities. In additional this method returns <see cref="List{TEntity}" />
@@ -972,7 +974,7 @@ public interface IRepository
     /// </returns>
     List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" />, <see cref="Expression{Func}" /> and
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" />. This method perform get all entities with filter and
@@ -993,7 +995,8 @@ public interface IRepository
     /// <returns>
     ///     Returns <see cref="List{TEntity}" />
     /// </returns>
-    List<TEntity> GetMultiple<TEntity>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+    List<TEntity> GetMultiple<TEntity>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class;
 
 
@@ -1028,7 +1031,7 @@ public interface IRepository
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> where expression,
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression and <see cref="Expression{Func}" />
@@ -1060,7 +1063,7 @@ public interface IRepository
         EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class;
-    
+
 
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> pagination filter object. This method
@@ -1085,7 +1088,7 @@ public interface IRepository
     List<TEntity> GetMultiple<TEntity, TFilter>(bool asNoTracking, TFilter filter)
         where TEntity : class
         where TFilter : FilterBase;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> pagination filter object. This method
     ///     performs generate LINQ expressions for Entities over DTOs automatically. In additional returns
@@ -1137,7 +1140,7 @@ public interface IRepository
     List<TEntity> GetMultiple<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class
         where TFilter : FilterBase;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" />  pagination filter object and
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression. This method performs get all entities
@@ -1195,7 +1198,7 @@ public interface IRepository
     List<TProjected> GetMultiple<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class
         where TFilter : FilterBase;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> paginationable filter object and
     ///     <see cref="Expression{Func}" /> project expression. This method performs get all projected objects with apply
@@ -1262,7 +1265,7 @@ public interface IRepository
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class
         where TFilter : FilterBase;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> paginationable filter object,
     ///     <see cref="Expression{Func}" /> project expression and <see cref="IIncludableQueryable{TEntity, TProperty}" />
@@ -1314,7 +1317,7 @@ public interface IRepository
     /// </returns>
     Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, CancellationToken cancellationToken = default)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method  returns List of Entity without filter async version. <see cref="List{TEntity}" />
     /// </summary>
@@ -1353,7 +1356,7 @@ public interface IRepository
     /// </returns>
     Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="Expression{Func}" /> and <see cref="CancellationToken" />. This method performs
     ///     without filter get all entity but you can convert it to any object you want
@@ -1397,7 +1400,7 @@ public interface IRepository
     /// </returns>
     Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="Expression{Func}" /> and <see cref="CancellationToken" />. This method performs apply
     ///     filter get all entity. In additional returns <see cref="List{TEntity}" />
@@ -1497,7 +1500,7 @@ public interface IRepository
     /// </returns>
     Task<List<TEntity>> GetMultipleAsync<TEntity>(bool asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> and <see cref="IIncludableQueryable{TEntity, TProperty}" />. This method
     ///     performs get all with includable entities async version. In additional this method returns
@@ -1516,7 +1519,8 @@ public interface IRepository
     /// <returns>
     ///     Returns <see cref="List{TEntity}" />
     /// </returns>
-    Task<List<TEntity>> GetMultipleAsync<TEntity>(EfTrackingOptions asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+    Task<List<TEntity>> GetMultipleAsync<TEntity>(
+        EfTrackingOptions asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
 
 
@@ -1546,7 +1550,7 @@ public interface IRepository
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" />, <see cref="Expression{Func}" />,
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> and <see cref="CancellationToken" />. This method perform
@@ -1607,8 +1611,8 @@ public interface IRepository
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
-    
-    
+
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> where expression,
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression, <see cref="Expression{Func}" /> select
@@ -1666,7 +1670,7 @@ public interface IRepository
     Task<List<TEntity>> GetMultipleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, CancellationToken cancellationToken = default)
         where TEntity : class
         where TFilter : FilterBase;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> pagination filter object and
     ///     <see cref="CancellationToken" />. This method performs generate LINQ expressions for Entities over DTOs
@@ -1722,7 +1726,7 @@ public interface IRepository
         CancellationToken cancellationToken = default)
         where TEntity : class
         where TFilter : FilterBase;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> paginationable filter object,
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> and <see cref="CancellationToken" /> cancellation token.
@@ -1786,7 +1790,7 @@ public interface IRepository
         CancellationToken cancellationToken = default)
         where TEntity : class
         where TFilter : FilterBase;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> paginationable filter object and
     ///     <see cref="Expression{Func}" /> project expression. This method performs get all projected objects with apply
@@ -1857,7 +1861,7 @@ public interface IRepository
         where TEntity : class
         where TFilter : FilterBase;
 
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="{TFilter}" /> paginationable filter object,
     ///     <see cref="Expression{Func}" /> project expression and <see cref="IIncludableQueryable{TEntity, TProperty}" />
@@ -1943,7 +1947,7 @@ public interface IRepository
     /// </returns>
     TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking and <see cref="Expression{Func}" /> where expression. This
     ///     method performs get entity with apply filter. In additional returns <see cref="{TEntity}" />
@@ -1985,7 +1989,7 @@ public interface IRepository
     /// </returns>
     TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> and
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression. This method performs get entity with
@@ -2034,7 +2038,7 @@ public interface IRepository
     /// </returns>
     TProjected GetSingle<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> where expression and
     ///     <see cref="Expression{Func}" /> project the expression. This method performs get projected object with apply
@@ -2092,7 +2096,7 @@ public interface IRepository
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> where expression,
     ///     <see cref="Expression{Func}" /> project expression and <see cref="IIncludableQueryable{TEntity, TProperty}" />
@@ -2148,7 +2152,7 @@ public interface IRepository
     TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter)
         where TEntity : class
         where TFilter : FilterBase;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking and <see cref="{TFilter}" /> filter object. This object must be
     ///     type <see cref="FilterBase" />. This method perform get entity with filter. In additional returns
@@ -2199,7 +2203,7 @@ public interface IRepository
     TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class
         where TFilter : FilterBase;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="IIncludableQueryable{TEntity, TProperty}" /> include
     ///     expression and <see cref="{TFilter}" /> filterable object <see cref="FilterBase" />. This method performs get and
@@ -2240,7 +2244,6 @@ public interface IRepository
     ///     Type of Filter <see cref="FilterBase" />
     /// </typeparam>
     /// <typeparam name="TProjected">The projection to return</typeparam>
-
     /// <param name="asNoTracking">
     ///     Do you want the entity to be tracked by EF Core? Default value : false <see cref="bool" />
     /// </param>
@@ -2381,7 +2384,7 @@ public interface IRepository
     /// </returns>
     Task<TEntity> GetSingleAsync<TEntity>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> and
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression. This method performs get entity with
@@ -2407,7 +2410,7 @@ public interface IRepository
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> and
     ///     <see cref="IIncludableQueryable{TEntity, TProperty}" /> include expression. This method performs get entity with
@@ -2463,7 +2466,7 @@ public interface IRepository
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> where expression,
     ///     <see cref="Expression{Func}" /> project the expression and <see cref="CancellationToken" /> cancellation token.
@@ -2493,7 +2496,6 @@ public interface IRepository
         EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class;
-
 
 
     /// <summary>
@@ -2528,7 +2530,7 @@ public interface IRepository
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
         where TEntity : class;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="Expression{Func}" /> where expression,
     ///     <see cref="Expression{Func}" /> project expression, <see cref="IIncludableQueryable{TEntity, TProperty}" /> include
@@ -2586,7 +2588,7 @@ public interface IRepository
     Task<TEntity> GetSingleAsync<TEntity, TFilter>(bool asNoTracking, TFilter filter, CancellationToken cancellationToken = default)
         where TEntity : class
         where TFilter : FilterBase;
-    
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="CancellationToken" /> cancellation token and
     ///     <see cref="{TFilter}" /> filter object. This object must be type <see cref="FilterBase" />. This method perform get
@@ -2643,8 +2645,8 @@ public interface IRepository
         CancellationToken cancellationToken = default)
         where TEntity : class
         where TFilter : FilterBase;
-    
-    
+
+
     /// <summary>
     ///     This method takes <see cref="bool" /> asNoTracking, <see cref="IIncludableQueryable{TEntity, TProperty}" /> include
     ///     expression, <see cref="CancellationToken" /> cancellation token and <see cref="{TFilter}" /> filterable object

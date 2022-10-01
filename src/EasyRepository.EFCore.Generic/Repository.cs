@@ -8,8 +8,10 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Abstractions;
+using Abstractions.Enums;
 using AutoFilterer.Extensions;
 using AutoFilterer.Types;
+using Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
@@ -19,6 +21,7 @@ using Microsoft.EntityFrameworkCore.Query;
 internal sealed class Repository : IRepository
 {
     private readonly DbContext _context;
+    // public event Action<DbContext> SavingChanges = _ => { };
 
     /// <summary>
     ///     Ctor
@@ -145,7 +148,7 @@ internal sealed class Repository : IRepository
             .Count();
     }
 
-    public async Task<int> Count<TEntity>(Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default)
+    public async Task<int> CountAsync<TEntity>(Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default)
         where TEntity : class
     {
         var count = await this._context.Set<TEntity>()
@@ -192,9 +195,26 @@ internal sealed class Repository : IRepository
         this._context.SaveChanges();
     }
 
+
     public async Task CompleteAsync(CancellationToken cancellationToken = default)
     {
         await this._context.SaveChangesAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(
+        EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter);
+        queryable = includeExpression(queryable);
+
+        return await queryable.Select(projectExpression)
+            .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -339,7 +359,7 @@ internal sealed class Repository : IRepository
         var entity = await this._context.Set<TEntity>()
             .FirstOrDefaultAsync(this.GenerateExpression<TEntity>(id), cancellationToken)
             .ConfigureAwait(false);
-        ;
+
         entity.IsDeleted = true;
         entity.DeletionDate = DateTime.UtcNow;
         await this.ReplaceAsync<TEntity, TPrimaryKey>(entity, cancellationToken)
@@ -404,6 +424,7 @@ internal sealed class Repository : IRepository
         return entities;
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<TEntity>> UpdateRangeAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         where TEntity : class
     {
@@ -412,6 +433,7 @@ internal sealed class Repository : IRepository
 
         return entities;
     }
+
 
     public async Task<IEnumerable<TEntity>> UpdateRangeAsync<TEntity, TPrimaryKey>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         where TEntity : EasyBaseEntity<TPrimaryKey>
@@ -422,6 +444,22 @@ internal sealed class Repository : IRepository
             .UpdateRange(entities);
 
         return entities;
+    }
+
+    /// <inheritdoc />
+    public async Task<List<TProjected>> GetMultipleAsync<TEntity, TFilter, TProjected>(
+        EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter);
+        queryable = includeExpression(queryable);
+
+        return await queryable.Select(projectExpression)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public IQueryable<TEntity> GetQueryable<TEntity>()
@@ -438,10 +476,48 @@ internal sealed class Repository : IRepository
             .Where(filter);
     }
 
+    /// <inheritdoc />
+    public async Task<TProjected> GetByIdAsync<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(this.GenerateExpression<TEntity>(id));
+        queryable = includeExpression(queryable);
+
+        return await queryable.Select(projectExpression)
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public List<TEntity> GetMultiple<TEntity>(bool asNoTracking)
         where TEntity : class
     {
         return this.FindQueryable<TEntity>(asNoTracking)
+            .ToList();
+    }
+
+    /// <inheritdoc />
+    public List<TEntity> GetMultiple<TEntity>(EfTrackingOptions asNoTracking)
+        where TEntity : class
+    {
+        return this.FindQueryable<TEntity>(asNoTracking)
+            .ToList();
+    }
+
+    /// <inheritdoc />
+    public List<TProjected> GetMultiple<TEntity, TFilter, TProjected>(
+        EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter);
+        queryable = includeExpression(queryable);
+
+        return queryable.Select(projectExpression)
             .ToList();
     }
 
@@ -453,7 +529,25 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<List<TEntity>> GetMultipleAsync<TEntity>(EfTrackingOptions asNoTracking, CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        return await this.FindQueryable<TEntity>(asNoTracking)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public List<TProjected> GetMultiple<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class
+    {
+        return this.FindQueryable<TEntity>(asNoTracking)
+            .Select(projectExpression)
+            .ToList();
+    }
+
+    /// <inheritdoc />
+    public List<TProjected> GetMultiple<TEntity, TProjected>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class
     {
         return this.FindQueryable<TEntity>(asNoTracking)
@@ -470,7 +564,27 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        return await this.FindQueryable<TEntity>(asNoTracking)
+            .Select(projectExpression)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression)
+        where TEntity : class
+    {
+        return this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression)
+            .ToList();
+    }
+
+    /// <inheritdoc />
+    public List<TEntity> GetMultiple<TEntity>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression)
         where TEntity : class
     {
         return this.FindQueryable<TEntity>(asNoTracking)
@@ -487,7 +601,27 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<List<TEntity>> GetMultipleAsync<TEntity>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        return await this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public List<TProjected> GetMultiple<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class
+    {
+        return this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression)
+            .Select(projectExpression)
+            .ToList();
+    }
+
+    /// <inheritdoc />
+    public List<TProjected> GetMultiple<TEntity, TProjected>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class
     {
         return this.FindQueryable<TEntity>(asNoTracking)
@@ -508,7 +642,30 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        return await this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression)
+            .Select(projectExpression)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking);
+        queryable = includeExpression(queryable);
+
+        return queryable.ToList();
+    }
+
+    /// <inheritdoc />
+    public List<TEntity> GetMultiple<TEntity>(EfTrackingOptions asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class
     {
         var queryable = this.FindQueryable<TEntity>(asNoTracking);
@@ -528,7 +685,31 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<List<TEntity>> GetMultipleAsync<TEntity>(
+        EfTrackingOptions asNoTracking, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking);
+        queryable = includeExpression(queryable);
+
+        return await queryable.ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public List<TEntity> GetMultiple<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression);
+        queryable = includeExpression(queryable);
+
+        return queryable.ToList();
+    }
+
+    /// <inheritdoc />
+    public List<TEntity> GetMultiple<TEntity>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class
     {
         var queryable = this.FindQueryable<TEntity>(asNoTracking)
@@ -551,8 +732,36 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<List<TEntity>> GetMultipleAsync<TEntity>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression);
+        queryable = includeExpression(queryable);
+
+        return await queryable.ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public List<TProjected> GetMultiple<TEntity, TProjected>(
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression);
+        queryable = includeExpression(queryable);
+
+        return queryable.Select(projectExpression)
+            .ToList();
+    }
+
+    /// <inheritdoc />
+    public List<TProjected> GetMultiple<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
         Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class
     {
@@ -578,7 +787,32 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<List<TProjected>> GetMultipleAsync<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        Expression<Func<TEntity, TProjected>> projectExpression, CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression);
+        queryable = includeExpression(queryable);
+
+        return await queryable.Select(projectExpression)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public List<TEntity> GetMultiple<TEntity, TFilter>(bool asNoTracking, TFilter filter)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        return this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter)
+            .ToList();
+    }
+
+    /// <inheritdoc />
+    public List<TEntity> GetMultiple<TEntity, TFilter>(EfTrackingOptions asNoTracking, TFilter filter)
         where TEntity : class
         where TFilter : FilterBase
     {
@@ -597,7 +831,30 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<List<TEntity>> GetMultipleAsync<TEntity, TFilter>(EfTrackingOptions asNoTracking, TFilter filter, CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        return await this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public List<TEntity> GetMultiple<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter);
+        queryable = includeExpression(queryable);
+
+        return queryable.ToList();
+    }
+
+    /// <inheritdoc />
+    public List<TEntity> GetMultiple<TEntity, TFilter>(EfTrackingOptions asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class
         where TFilter : FilterBase
     {
@@ -622,7 +879,33 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<List<TEntity>> GetMultipleAsync<TEntity, TFilter>(
+        EfTrackingOptions asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter);
+        queryable = includeExpression(queryable);
+
+        return await queryable.ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public List<TProjected> GetMultiple<TEntity, TFilter, TProjected>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        return this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter)
+            .Select(projectExpression)
+            .ToList();
+    }
+
+    /// <inheritdoc />
+    public List<TProjected> GetMultiple<TEntity, TFilter, TProjected>(EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class
         where TFilter : FilterBase
     {
@@ -634,6 +917,20 @@ internal sealed class Repository : IRepository
 
     public async Task<List<TProjected>> GetMultipleAsync<TEntity, TFilter, TProjected>(
         bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        return await this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter)
+            .Select(projectExpression)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<List<TProjected>> GetMultipleAsync<TEntity, TFilter, TProjected>(
+        EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class
         where TFilter : FilterBase
@@ -683,6 +980,45 @@ internal sealed class Repository : IRepository
         return queryable.FirstOrDefault();
     }
 
+    /// <inheritdoc />
+    public TEntity GetSingle<TEntity>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression);
+
+        return queryable.FirstOrDefault();
+    }
+
+    /// <inheritdoc />
+    public TProjected GetSingle<TEntity, TProjected, TFilter>(
+        EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter);
+        queryable = includeExpression(queryable);
+
+        return queryable.Select(projectExpression)
+            .FirstOrDefault();
+    }
+
+    public TProjected GetSingle<TEntity, TProjected, TFilter>(
+        bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter);
+        queryable = includeExpression(queryable);
+
+        return queryable.Select(projectExpression)
+            .FirstOrDefault();
+    }
+
     public async Task<TEntity> GetSingleAsync<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default)
         where TEntity : class
     {
@@ -693,7 +1029,29 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<TEntity> GetSingleAsync<TEntity>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression);
+
+        return await queryable.FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public TEntity GetSingle<TEntity>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression);
+        queryable = includeExpression(queryable);
+
+        return queryable.FirstOrDefault();
+    }
+
+    /// <inheritdoc />
+    public TEntity GetSingle<TEntity>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class
     {
         var queryable = this.FindQueryable<TEntity>(asNoTracking)
@@ -716,7 +1074,31 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<TEntity> GetSingleAsync<TEntity>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression);
+        queryable = includeExpression(queryable);
+
+        return await queryable.FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public TProjected GetSingle<TEntity, TProjected>(bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class
+    {
+        return this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression)
+            .Select(projectExpression)
+            .FirstOrDefault();
+    }
+
+    /// <inheritdoc />
+    public TProjected GetSingle<TEntity, TProjected>(EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class
     {
         return this.FindQueryable<TEntity>(asNoTracking)
@@ -737,8 +1119,35 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<TProjected> GetSingleAsync<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        return await this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression)
+            .Select(projectExpression)
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public TProjected GetSingle<TEntity, TProjected>(
         bool asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression);
+        queryable = includeExpression(queryable);
+
+        return queryable.Select(projectExpression)
+            .FirstOrDefault();
+    }
+
+    /// <inheritdoc />
+    public TProjected GetSingle<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class
     {
@@ -764,7 +1173,33 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<TProjected> GetSingleAsync<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TProjected>> projectExpression,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression, CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(whereExpression);
+        queryable = includeExpression(queryable);
+
+        return await queryable.Select(projectExpression)
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter);
+
+        return queryable.FirstOrDefault();
+    }
+
+    /// <inheritdoc />
+    public TEntity GetSingle<TEntity, TFilter>(EfTrackingOptions asNoTracking, TFilter filter)
         where TEntity : class
         where TFilter : FilterBase
     {
@@ -785,7 +1220,31 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<TEntity> GetSingleAsync<TEntity, TFilter>(EfTrackingOptions asNoTracking, TFilter filter, CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter);
+
+        return await queryable.FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public TEntity GetSingle<TEntity, TFilter>(bool asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter);
+        queryable = includeExpression(queryable);
+
+        return queryable.FirstOrDefault();
+    }
+
+    /// <inheritdoc />
+    public TEntity GetSingle<TEntity, TFilter>(EfTrackingOptions asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class
         where TFilter : FilterBase
     {
@@ -810,7 +1269,34 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<TEntity> GetSingleAsync<TEntity, TFilter>(
+        EfTrackingOptions asNoTracking, TFilter filter, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter);
+        queryable = includeExpression(queryable);
+
+        return await queryable.FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public TProjected GetSingle<TEntity, TProjected, TFilter>(bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class
+        where TFilter : FilterBase
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .ApplyFilter(filter);
+
+        return queryable.Select(projectExpression)
+            .FirstOrDefault();
+    }
+
+    /// <inheritdoc />
+    public TProjected GetSingle<TEntity, TProjected, TFilter>(EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class
         where TFilter : FilterBase
     {
@@ -835,19 +1321,21 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
-    public TProjected GetSingle<TEntity, TProjected, TFilter>(
-        bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+    /// <inheritdoc />
+    public async Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(
+        EfTrackingOptions asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
+        CancellationToken cancellationToken = default)
         where TEntity : class
         where TFilter : FilterBase
     {
         var queryable = this.FindQueryable<TEntity>(asNoTracking)
             .ApplyFilter(filter);
-        queryable = includeExpression(queryable);
 
-        return queryable.Select(projectExpression)
-            .FirstOrDefault();
+        return await queryable.Select(projectExpression)
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
+
 
     public async Task<TProjected> GetSingleAsync<TEntity, TProjected, TFilter>(
         bool asNoTracking, TFilter filter, Expression<Func<TEntity, TProjected>> projectExpression,
@@ -871,6 +1359,31 @@ internal sealed class Repository : IRepository
             .FirstOrDefault(this.GenerateExpression<TEntity>(id));
     }
 
+    /// <inheritdoc />
+    public TEntity GetById<TEntity>(EfTrackingOptions asNoTracking, object id)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .FirstOrDefault(this.GenerateExpression<TEntity>(id));
+
+        return queryable;
+    }
+
+
+    /// <inheritdoc />
+    public TProjected GetById<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(this.GenerateExpression<TEntity>(id));
+        queryable = includeExpression(queryable);
+
+        return queryable.Select(projectExpression)
+            .FirstOrDefault();
+    }
+
     public async Task<TEntity> GetByIdAsync<TEntity>(bool asNoTracking, object id, CancellationToken cancellationToken = default)
         where TEntity : class
     {
@@ -879,7 +1392,27 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<TEntity> GetByIdAsync<TEntity>(EfTrackingOptions asNoTracking, object id, CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        return await this.FindQueryable<TEntity>(asNoTracking)
+            .FirstOrDefaultAsync(this.GenerateExpression<TEntity>(id), cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public TEntity GetById<TEntity>(bool asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(this.GenerateExpression<TEntity>(id));
+        queryable = includeExpression(queryable);
+
+        return queryable.FirstOrDefault();
+    }
+
+    /// <inheritdoc />
+    public TEntity GetById<TEntity>(EfTrackingOptions asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression)
         where TEntity : class
     {
         var queryable = this.FindQueryable<TEntity>(asNoTracking)
@@ -902,7 +1435,32 @@ internal sealed class Repository : IRepository
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<TEntity> GetByIdAsync<TEntity>(
+        EfTrackingOptions asNoTracking, object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includeExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(this.GenerateExpression<TEntity>(id));
+        queryable = includeExpression(queryable);
+
+        return await queryable.FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public TProjected GetById<TEntity, TProjected>(bool asNoTracking, object id, Expression<Func<TEntity, TProjected>> projectExpression)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(this.GenerateExpression<TEntity>(id));
+
+        return queryable.Select(projectExpression)
+            .FirstOrDefault();
+    }
+
+    /// <inheritdoc />
+    public TProjected GetById<TEntity, TProjected>(EfTrackingOptions asNoTracking, object id, Expression<Func<TEntity, TProjected>> projectExpression)
         where TEntity : class
     {
         var queryable = this.FindQueryable<TEntity>(asNoTracking)
@@ -914,6 +1472,20 @@ internal sealed class Repository : IRepository
 
     public async Task<TProjected> GetByIdAsync<TEntity, TProjected>(
         bool asNoTracking, object id, Expression<Func<TEntity, TProjected>> projectExpression,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        var queryable = this.FindQueryable<TEntity>(asNoTracking)
+            .Where(this.GenerateExpression<TEntity>(id));
+
+        return await queryable.Select(projectExpression)
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TProjected> GetByIdAsync<TEntity, TProjected>(
+        EfTrackingOptions asNoTracking, object id, Expression<Func<TEntity, TProjected>> projectExpression,
         CancellationToken cancellationToken = default)
         where TEntity : class
     {
@@ -950,6 +1522,18 @@ internal sealed class Repository : IRepository
         return await queryable.Select(projectExpression)
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
+    }
+
+    private IQueryable<TEntity> FindQueryable<TEntity>(EfTrackingOptions asNoTracking)
+        where TEntity : class
+    {
+        var queryable = this.GetQueryable<TEntity>();
+        if (asNoTracking.HasNoTracking())
+        {
+            queryable = queryable.AsNoTracking();
+        }
+
+        return queryable;
     }
 
     private IQueryable<TEntity> FindQueryable<TEntity>(bool asNoTracking)

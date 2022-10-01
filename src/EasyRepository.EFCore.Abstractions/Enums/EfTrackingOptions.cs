@@ -2,14 +2,13 @@
 
 public enum EfTrackingOptions
 {
-        
     /// <summary>
-    /// Disables EfCore change tracking
+    ///     Disables EfCore change tracking
     /// </summary>
     AsNoTracking,
-            
+
     /// <summary>
-    /// Enables EfCore Change Tracking
+    ///     Enables EfCore Change Tracking
     /// </summary>
     WithTracking
 }

@@ -19,7 +19,8 @@ public class SampleDbContext : DbContext
     ///     of this class and it is not designed to be directly constructed in your application
     ///     code.
     /// </param>
-    public SampleDbContext(DbContextOptions options) : base(options)
+    public SampleDbContext(DbContextOptions options)
+        : base(options)
     {
     }
 

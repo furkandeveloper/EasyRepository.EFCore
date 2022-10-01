@@ -21,11 +21,6 @@ public abstract class EasyBaseEntity<TPrimaryKey> : IEasyEntity<TPrimaryKey>, IE
     public virtual TPrimaryKey Id { get; set; }
 
     /// <summary>
-    ///     Modification Date <see cref="{DateTime}" />
-    /// </summary>
-    public virtual DateTime? ModificationDate { get; set; }
-
-    /// <summary>
     ///     Deletion Date <see cref="{DateTime}" />
     /// </summary>
     public virtual DateTime? DeletionDate { get; set; }
@@ -34,4 +29,9 @@ public abstract class EasyBaseEntity<TPrimaryKey> : IEasyEntity<TPrimaryKey>, IE
     ///     Is Deleted <see cref="{Boolean}" />
     /// </summary>
     public virtual bool IsDeleted { get; set; }
+
+    /// <summary>
+    ///     Modification Date <see cref="{DateTime}" />
+    /// </summary>
+    public virtual DateTime? ModificationDate { get; set; }
 }
