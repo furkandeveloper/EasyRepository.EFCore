@@ -1,9 +1,9 @@
-﻿using EasyRepository.EFCore.Abstractions;
+﻿namespace EasyRepository.EFCore.Generic;
 
-namespace EasyRepository.EFCore.Generic;
+using Abstractions;
 
 /// <summary>
-/// Abstraction of Unit Of Work pattern
+///     Abstraction of Unit Of Work pattern
 /// </summary>
 public interface IUnitOfWork
 {

@@ -1,15 +1,14 @@
-﻿using System;
+﻿namespace EasyRepository.EFCore.Abstractions;
 
-namespace EasyRepository.EFCore.Abstractions
+using System;
+
+/// <summary>
+///     This interface implemented Modification Date property for entity
+/// </summary>
+public interface IEasyUpdateDateEntity
 {
     /// <summary>
-    /// This interface implemented Modification Date property for entity
+    ///     Modification Date
     /// </summary>
-    public interface IEasyUpdateDateEntity
-    {
-        /// <summary>
-        /// Modification Date
-        /// </summary>
-        public DateTime? ModificationDate { get; set; }
-    }
+    public DateTime? ModificationDate { get; set; }
 }

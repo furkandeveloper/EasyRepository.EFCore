@@ -1,29 +1,26 @@
-﻿using AutoFilterer.Attributes;
-using AutoFilterer.Types;
+﻿namespace EasyRepository.Sample.Dtos.Request;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoFilterer.Attributes;
+using AutoFilterer.Enums;
+using AutoFilterer.Types;
 
-namespace EasyRepository.Sample.Dtos.Request
+[PossibleSortings("Title", "CreationDate", "ModificationDate", "DeletionDate")]
+public class BookFilterDto : PaginationFilterBase
 {
-    [PossibleSortings("Title", "CreationDate", "ModificationDate", "DeletionDate")]
-    public class BookFilterDto : PaginationFilterBase
+    public BookFilterDto()
     {
-        public BookFilterDto()
-        {
-            this.Sort = "Title";
-            this.SortBy = AutoFilterer.Enums.Sorting.Descending;
-        }
-
-        [ToLowerContainsComparison]
-        public string Title { get; set; }
-
-        public Range<int> TotalPage { get; set; }
-
-        public Range<DateTime> CreationDate { get; set; }
-
-        public Range<DateTime> ModificationDate { get; set; }
-        public Range<DateTime> DeletionDate { get; set; }
+        this.Sort = "Title";
+        this.SortBy = Sorting.Descending;
     }
+
+    [ToLowerContainsComparison]
+    public string Title { get; set; }
+
+    public Range<int> TotalPage { get; set; }
+
+    public Range<DateTime> CreationDate { get; set; }
+
+    public Range<DateTime> ModificationDate { get; set; }
+    public Range<DateTime> DeletionDate { get; set; }
 }

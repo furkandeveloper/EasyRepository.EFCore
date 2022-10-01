@@ -1,15 +1,16 @@
-﻿using EasyRepository.EFCore.Abstractions;
+﻿namespace EasyRepository.EFCore.Generic;
 
-namespace EasyRepository.EFCore.Generic;
+using Abstractions;
 
 /// <summary>
-/// Implementation of Unit of work pattern
+///     Implementation of Unit of work pattern
 /// </summary>
 public class UnitOfWork : IUnitOfWork
 {
     public UnitOfWork(IRepository repository)
     {
-        Repository = repository;
+        this.Repository = repository;
     }
+
     public IRepository Repository { get; }
 }

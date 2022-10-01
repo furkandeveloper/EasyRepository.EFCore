@@ -1,20 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<Import Project="..\..\common.props" />
+    <Import Project="..\..\common.props"/>
 
-	<PropertyGroup>
-		<PackageIcon>folders.png</PackageIcon>
-		<PackageIconUrl />
-	</PropertyGroup>
-	<ItemGroup>
-	  <PackageReference Include="AutoFilterer" Version="2.12.2" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.9" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Include="folders.png">
-	    <Pack>True</Pack>
-	    <PackagePath></PackagePath>
-	  </None>
-	</ItemGroup>
+    <PropertyGroup>
+        <PackageIcon>folders.png</PackageIcon>
+        <PackageIconUrl/>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="AutoFilterer" Version="2.12.2"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.9"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="folders.png">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </None>
+    </ItemGroup>
 
 </Project>

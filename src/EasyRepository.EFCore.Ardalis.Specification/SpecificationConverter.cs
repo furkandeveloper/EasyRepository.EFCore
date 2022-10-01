@@ -1,30 +1,31 @@
-﻿using System.Linq;
-using Ardalis.Specification;
-using Ardalis.Specification.EntityFrameworkCore;
+﻿namespace EasyRepository.EFCore.Ardalis.Specification;
 
-namespace EasyRepository.EFCore.Ardalis.Specification;
+using System.Linq;
+using global::Ardalis.Specification;
+using global::Ardalis.Specification.EntityFrameworkCore;
 
 /// <summary>
-/// Specification Builder
+///     Specification Builder
 /// </summary>
 public static class SpecificationConverter
 {
     /// <summary>
-    /// This method convert specification object to queryable object.
+    ///     This method convert specification object to queryable object.
     /// </summary>
     /// <param name="entity">
-    /// Entity
+    ///     Entity
     /// </param>
     /// <param name="specification">
-    /// Specification object
+    ///     Specification object
     /// </param>
     /// <typeparam name="TEntity">
-    /// Entity
+    ///     Entity
     /// </typeparam>
     /// <returns>
-    /// <see cref="IQueryable{TEntity}"/>
+    ///     <see cref="IQueryable{TEntity}" />
     /// </returns>
-    public static IQueryable<TEntity> Convert<TEntity>(IQueryable<TEntity> entity, ISpecification<TEntity> specification) where TEntity : class
+    public static IQueryable<TEntity> Convert<TEntity>(IQueryable<TEntity> entity, ISpecification<TEntity> specification)
+        where TEntity : class
     {
         return SpecificationEvaluator.Default.GetQuery(entity, specification);
     }
