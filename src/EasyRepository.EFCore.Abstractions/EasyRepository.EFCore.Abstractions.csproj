@@ -7,8 +7,8 @@
 		<PackageIconUrl />
 	</PropertyGroup>
 	<ItemGroup>
-	  <PackageReference Include="AutoFilterer" Version="2.12.2" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.9" />
+	  <PackageReference Include="AutoFilterer" Version="2.13.0" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Include="folders.png">
