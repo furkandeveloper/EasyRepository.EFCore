@@ -11,27 +11,37 @@ namespace EasyRepository.EFCore.Abstractions
     public abstract class EasyBaseEntity<TPrimaryKey> : IEasyEntity<TPrimaryKey>, IEasyCreateDateEntity, IEasyUpdateDateEntity, IEasySoftDeleteEntity
     {
         /// <summary>
-        /// Creation Date <see cref="{DateTime}"/>
+        /// Creation Date <see>
+        ///     <cref>{DateTime}</cref>
+        /// </see>
         /// </summary>
         public virtual DateTime CreationDate { get; set; }
 
         /// <summary>
-        /// Primary Key <see cref="{TPrimaryKey}"/>
+        /// Primary Key <see>
+        ///     <cref>{TPrimaryKey}</cref>
+        /// </see>
         /// </summary>
         public virtual TPrimaryKey Id { get; set; }
 
         /// <summary>
-        /// Modification Date <see cref="{DateTime}"/>
+        /// Modification Date <see>
+        ///     <cref>{DateTime}</cref>
+        /// </see>
         /// </summary>
         public virtual DateTime? ModificationDate { get; set; }
 
         /// <summary>
-        /// Deletion Date <see cref="{DateTime}"/>
+        /// Deletion Date <see>
+        ///     <cref>{DateTime}</cref>
+        /// </see>
         /// </summary>
         public virtual DateTime? DeletionDate { get; set; }
 
         /// <summary>
-        /// Is Deleted <see cref="{Boolean}"/>
+        /// Is Deleted <see>
+        ///     <cref>{Boolean}</cref>
+        /// </see>
         /// </summary>
         public virtual bool IsDeleted { get; set; }
     }
