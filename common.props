@@ -4,7 +4,7 @@
 		<RepositoryType>Git</RepositoryType>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<TargetFramework>net8.0</TargetFramework>
-		<Version>3.0.0</Version>
+		<Version>4.0.0</Version>
 		<LangVersion>latest</LangVersion>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<RepositoryUrl>https://github.com/furkandeveloper/EasyRepository.EFCore</RepositoryUrl>
@@ -16,7 +16,7 @@
 		</Description>
 		<PackageTags>dotnet, efcore, repository-pattern, generic-repository, generic-repository-pattern</PackageTags>
 		<PackageReleaseNotes>
-			Upgrade target framework from dotnet6 to dotnet7
+			Upgrade target framework from dotnet7 to dotnet8
 		</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
