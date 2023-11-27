@@ -3,7 +3,7 @@
 		<Title>Generic Repository Pattern For Entity Framework Core</Title>
 		<RepositoryType>Git</RepositoryType>
 		<NeutralLanguage>en-US</NeutralLanguage>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<Version>3.0.0</Version>
 		<LangVersion>latest</LangVersion>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
