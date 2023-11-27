@@ -1,7 +1,6 @@
 ﻿using EasyRepository.EFCore.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace EasyRepository.EFCore.Generic
 {
